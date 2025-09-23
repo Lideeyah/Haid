@@ -11,7 +11,8 @@ module.exports = {
   hedera: {
     network: process.env.HEDERA_NETWORK || 'testnet',
     operatorId: process.env.HEDERA_OPERATOR_ID,
-    operatorKey: process.env.HEDERA_OPERATOR_KEY
+    operatorKey: process.env.HEDERA_OPERATOR_KEY,
+    guardianTopicId: process.env.HEDERA_GUARDIAN_TOPIC_ID
   },
   
   security: {

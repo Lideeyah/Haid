@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const config = require('./config');
 const healthRoutes = require('./routes/health');
+const collectionsRoutes = require('./routes/collections');
 const refugeeRoutes = require('./routes/refugees');
 const eventRoutes = require('./routes/events');
 
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use('/health', healthRoutes);
+app.use(config.server.apiPrefix + '/collections', collectionsRoutes);
 app.use(config.server.apiPrefix + '/refugees', refugeeRoutes);
 app.use(config.server.apiPrefix + '/events', eventRoutes);
 app.use(config.server.apiPrefix, (req, res) => {
