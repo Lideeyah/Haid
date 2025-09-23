@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const config = require('./config');
 const healthRoutes = require('./routes/health');
+const refugeeRoutes = require('./routes/refugees');
+const eventRoutes = require('./routes/events');
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use('/health', healthRoutes);
+app.use(config.server.apiPrefix + '/refugees', refugeeRoutes);
+app.use(config.server.apiPrefix + '/events', eventRoutes);
 app.use(config.server.apiPrefix, (req, res) => {
   res.json({ message: 'Haid API is running', version: '1.0.0' });
 });
