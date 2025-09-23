@@ -60,6 +60,10 @@ The server will start on `http://localhost:3000`
 ### API Root
 - **GET** `/api/v1` - API information and version
 
+### Events Analytics
+- **GET** `/api/v1/events/:id/logs` - Returns all collection records for a specific event
+- **GET** `/api/v1/events/:id/analytics` - Returns analytics summary with totalServed and duplicatesPrevented counts
+
 ## Project Structure
 
 ```
