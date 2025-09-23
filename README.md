@@ -6,6 +6,8 @@ A Node.js backend server with Express and Hedera blockchain integration.
 
 - ✅ Express.js RESTful API server
 - ✅ Health check endpoint (`/health`)
+- ✅ Aid collection endpoint with double-claim prevention (`/api/v1/collections`)
+- ✅ Hedera Guardian logging for successful collections
 - ✅ Hedera testnet integration ready
 - ✅ Environment configuration with dotenv
 - ✅ Security middleware (Helmet, CORS)
@@ -36,6 +38,7 @@ A Node.js backend server with Express and Hedera blockchain integration.
    ```
    HEDERA_OPERATOR_ID=0.0.your_account_id
    HEDERA_OPERATOR_KEY=your_private_key
+   HEDERA_GUARDIAN_TOPIC_ID=0.0.your_topic_id
    ```
 
 ### Running the Server
@@ -63,6 +66,11 @@ The server will start on `http://localhost:3000`
 ### Events Analytics
 - **GET** `/api/v1/events/:id/logs` - Returns all collection records for a specific event
 - **GET** `/api/v1/events/:id/analytics` - Returns analytics summary with totalServed and duplicatesPrevented counts
+### Aid Collections
+- **POST** `/api/v1/collections` - Process aid collection request
+  - Body: `{ "refugeeDid": "string", "eventId": "string" }`
+  - Returns: Success with Guardian transaction details or error for duplicates
+- **GET** `/api/v1/collections/status?refugeeDid=...&eventId=...` - Check collection status
 
 ## Project Structure
 
@@ -83,6 +91,7 @@ src/
 | `NODE_ENV` | Environment | development |
 | `HEDERA_OPERATOR_ID` | Hedera account ID | - |
 | `HEDERA_OPERATOR_KEY` | Hedera private key | - |
+| `HEDERA_GUARDIAN_TOPIC_ID` | Guardian topic ID for logging | - |
 | `API_PREFIX` | API route prefix | /api/v1 |
 
 ## Dependencies
