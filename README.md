@@ -1,3 +1,57 @@
+# Haid – Humanitarian Aid with Hedera
+
+**Haid** is a decentralized, transparent, and inclusive humanitarian aid distribution platform built on **Hedera Guardian**. It is designed to ensure **accountable, efficient, and verifiable aid delivery** to vulnerable populations.
+
+---
+
+## Features
+
+* **QR/NFC Wristbands:** Each aid recipient gets a wristband linked to a unique **DID (Decentralized Identifier)**.
+* **Aid Distribution Events:** NGOs can create and manage distributions (Morning, Afternoon, Evening).
+* **Scan & Verify:** Volunteers scan wristbands; all scans are logged on **Hedera Guardian**.
+* **Real-time Dashboards:** NGOs, donors, and auditors can view charts, geo-heatmaps, and KPIs in real time.
+* **Multi-language Support:** English, French, Swahili, Hausa, Arabic.
+* **Accessibility:** Voice guidance, high contrast mode, large text for ease of use.
+* **Exportable Reports:** Generate CSV/PDF reports for audits or donors.
+
+---
+
+## Users & Roles
+
+* **Aid Recipients:** Scan wristbands to receive aid, access multi-language instructions.
+* **NGOs / Aid Organizations:** Create events, monitor distributions, generate reports.
+* **Donors / Governments:** View live dashboards and impact metrics.
+* **Volunteers / Field Staff:** Scan wristbands, verify aid delivery.
+* **Auditors / Watchdogs:** Access tamper-proof logs for accountability.
+
+---
+
+## Tech Stack
+
+* **Frontend:** React / Next.js, charts with Recharts/D3.js, geo-maps.
+* **Backend:** Node.js / NestJS, REST APIs, role-based access control.
+* **Blockchain:** Hedera Guardian for logging distributions and issuing DIDs.
+* **Database:** PostgreSQL for off-chain storage, Guardian Indexer for visualization.
+* **Hardware:** NFC/QR wristbands integrated with mobile devices.
+
+---
+
+## Hackathon MVP
+
+* Functional QR/NFC wristband scans
+* Guardian integration for verifiable logs
+* Multi-language, accessible dashboards
+* Real-time charts and geo-heatmaps
+* CSV/PDF export for audits and donors
+
+---
+
+## Goal
+
+Haid demonstrates **transparent, inclusive, and scalable humanitarian aid delivery**, providing NGOs, donors, and governments with a trusted system for distributing resources efficiently and fairly.
+
+
+
 # Haid Backend API
 
 A Node.js backend server with Express and Hedera blockchain integration.
