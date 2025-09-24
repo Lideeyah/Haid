@@ -1,0 +1,8 @@
+{
+  "success": "Operation completed successfully",
+  "created": "Resource created successfully",
+  "updated": "Resource updated successfully",
+  "deleted": "Resource deleted successfully",
+  "retrieved": "Resource retrieved successfully",
+  "exported": "Data exported successfully"
+}

@@ -1,0 +1,32 @@
+{
+  "welcome": "Welcome to Haid",
+  "api": {
+    "running": "Haid API is running",
+    "version": "1.0.0"
+  },
+  "user": {
+    "registered": "User registered successfully",
+    "logged_in": "User logged in successfully",
+    "not_found": "User not found",
+    "already_exists": "User with this email already exists"
+  },
+  "refugee": {
+    "registered": "Beneficiary registered successfully",
+    "not_found": "Beneficiary not found"
+  },
+  "event": {
+    "created": "Event created successfully",
+    "updated": "Event updated successfully",
+    "deleted": "Event deleted successfully",
+    "not_found": "Event not found",
+    "retrieved": "Event retrieved successfully",
+    "retrieved_all": "Events retrieved successfully"
+  },
+  "collection": {
+    "success": "Aid collection recorded successfully",
+    "manual_success": "Manual aid collection recorded successfully",
+    "duplicate": "Aid has already been collected for this refugee and event",
+    "not_collected": "Aid has not been collected",
+    "collected": "Aid has been collected"
+  }
+}

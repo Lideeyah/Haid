@@ -47,6 +47,70 @@ const postCollection = async (req, res) => {
 };
 
 /**
+ * Process manual aid collection request
+ * POST /collections/manual
+ */
+const manualCollection = async (req, res) => {
+  try {
+    const { refugeeDid, eventId, reason } = req.body;
+
+    // Validate required fields
+    if (!refugeeDid || !eventId || !reason) {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'refugeeDid, eventId, and reason are required'
+      });
+    }
+
+    // Process the manual collection
+    const result = await collectionsService.manualCollection(refugeeDid, eventId, reason);
+
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('Manual collection request failed:', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: 'Failed to process manual collection request',
+      details: error.message
+    });
+  }
+};
+
+/**
+ * Process bulk aid collection requests
+ * POST /collections/bulk
+ */
+const bulkCollections = async (req, res) => {
+  try {
+    const { collections } = req.body;
+
+    if (!collections || !Array.isArray(collections)) {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'A \'collections\' array is required'
+      });
+    }
+
+    const result = await collectionsService.processBulkCollections(collections);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Bulk collection request failed:', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: 'Failed to process bulk collection request',
+      details: error.message
+    });
+  }
+};
+
+/**
  * Check collection status for a refugee and event
  * GET /collections/status?refugeeDid=...&eventId=...
  */
@@ -87,5 +151,7 @@ const getCollectionStatus = async (req, res) => {
 
 module.exports = {
   postCollection,
+  manualCollection,
+  bulkCollections,
   getCollectionStatus
 };

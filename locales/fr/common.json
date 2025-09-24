@@ -1,0 +1,32 @@
+{
+  "welcome": "Bienvenue à Haid",
+  "api": {
+    "running": "L'API Haid fonctionne",
+    "version": "1.0.0"
+  },
+  "user": {
+    "registered": "Utilisateur enregistré avec succès",
+    "logged_in": "Utilisateur connecté avec succès",
+    "not_found": "Utilisateur non trouvé",
+    "already_exists": "Un utilisateur avec cet email existe déjà"
+  },
+  "refugee": {
+    "registered": "Bénéficiaire enregistré avec succès",
+    "not_found": "Bénéficiaire non trouvé"
+  },
+  "event": {
+    "created": "Événement créé avec succès",
+    "updated": "Événement mis à jour avec succès",
+    "deleted": "Événement supprimé avec succès",
+    "not_found": "Événement non trouvé",
+    "retrieved": "Événement récupéré avec succès",
+    "retrieved_all": "Événements récupérés avec succès"
+  },
+  "collection": {
+    "success": "Collecte d'aide enregistrée avec succès",
+    "manual_success": "Collecte d'aide manuelle enregistrée avec succès",
+    "duplicate": "L'aide a déjà été collectée pour ce réfugié et cet événement",
+    "not_collected": "L'aide n'a pas été collectée",
+    "collected": "L'aide a été collectée"
+  }
+}

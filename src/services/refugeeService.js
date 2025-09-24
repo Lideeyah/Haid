@@ -1,59 +1,67 @@
-const { Client, PrivateKey, PublicKey } = require('@hashgraph/sdk');
-const config = require('../config');
+const { v4: uuidv4 } = require('uuid');
+const QRCode = require('qrcode');
+
+// In-memory store for registered refugees (for MVP)
+const registeredRefugees = [];
 
 /**
  * Refugee service for DID generation and management
  */
 
 /**
- * Generate a new Hedera DID for a refugee
- * @returns {Object} DID data and QR code information
+ * Register a new beneficiary, generate a simulated DID and QR code.
+ * @returns {Object} Contains the generated DID and QR code (data URL).
  */
-const generateDID = async () => {
+const registerBeneficiary = async () => {
   try {
-    // Generate a new key pair for the refugee
-    const privateKey = PrivateKey.generateECDSA();
-    const publicKey = privateKey.publicKey;
-    
-    // Create a simple DID identifier using the public key
-    // Format: did:hedera:testnet:{publicKey}
-    const did = `did:hedera:${config.hedera.network}:${publicKey.toStringRaw()}`;
-    
-    // Prepare QR code data - this will contain the DID and basic info
-    const qrCodeData = {
+    const uniqueId = uuidv4();
+    const did = `did:haid:${uniqueId}`; // Simulated DID
+
+    const qrCodeDataURL = await QRCode.toDataURL(did);
+
+    const newBeneficiary = {
+      id: uniqueId,
       did: did,
-      publicKey: publicKey.toStringRaw(),
-      network: config.hedera.network,
-      timestamp: new Date().toISOString(),
-      type: 'refugee_identity'
+      qrCode: qrCodeDataURL,
+      registeredAt: new Date().toISOString()
     };
-    
+
+    registeredRefugees.push(newBeneficiary);
+
     return {
-      did: did,
-      publicKey: publicKey.toStringRaw(),
-      privateKey: privateKey.toStringRaw(), // In real implementation, this should be securely stored
-      network: config.hedera.network,
-      qrCodeData: JSON.stringify(qrCodeData),
-      timestamp: new Date().toISOString()
+      did: newBeneficiary.did,
+      qrCode: newBeneficiary.qrCode
     };
-    
+
   } catch (error) {
-    console.error('Error generating DID:', error);
-    throw new Error('Failed to generate DID: ' + error.message);
+    console.error('Error registering beneficiary:', error);
+    throw new Error('Failed to register beneficiary: ' + error.message);
   }
 };
 
 /**
- * Validate DID format
+ * Validate simulated DID format
  * @param {string} did - The DID to validate
  * @returns {boolean} Whether the DID is valid
  */
 const validateDID = (did) => {
-  const didPattern = /^did:hedera:(testnet|mainnet):[a-fA-F0-9]{64}$/;
+  const didPattern = /^did:haid:[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return didPattern.test(did);
 };
 
+/**
+ * Find a beneficiary by DID
+ * @param {string} did - The DID to search for
+ * @returns {Object|undefined} The beneficiary object if found, otherwise undefined.
+ */
+const findBeneficiaryByDID = (did) => {
+  return registeredRefugees.find(b => b.did === did);
+};
+
 module.exports = {
-  generateDID,
-  validateDID
+  registerBeneficiary,
+  validateDID,
+  findBeneficiaryByDID,
+  // Expose for testing/inspection in MVP
+  _getRegisteredRefugees: () => registeredRefugees
 };
