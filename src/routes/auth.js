@@ -109,6 +109,28 @@ const loginValidation = [
  *                   properties:
  *                     message:
  *                       type: string
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         password:
+ *                           type: string
+ *                         role:
+ *                           type: string
+ *                         simulatedDid:
+ *                           type: string
+ *                           format: uuid
+ *                         qrCodeUrl:
+ *                           type: string
+ *                           format: uri
+ *                         createdAt:
+ *                           type: string
+ *                           format: date-time
  *       400:
  *         description: Validation error or user already exists
  */
