@@ -48,56 +48,11 @@ _AKA Buzz brain_
 
 ## 🌐 Live Hosted API
 
-Your backend is live and ready to test:
+The backend is live and ready to test:
 
 - **Base URL:** [`https://haid.onrender.com`](https://haid.onrender.com)
 - **Swagger Docs:** [`https://haid.onrender.com/api-docs`](https://haid.onrender.com/api-docs)
 - **Health Check:** [`https://haid.onrender.com/health`](https://haid.onrender.com/health)
-
----
-
-## 🚀 Quick Demo
-
-Get started in 3 steps:
-
-```sh
-git clone https://github.com/Lideeyah/Haid.git
-cd Haid
-npm install
-npm run dev
-```
-
-Then visit [`http://localhost:5000/api-docs`](http://localhost:5000/api-docs) for interactive Swagger docs.
-
----
-
-## ⚙️ Environment Variables
-
-| Variable         | Description                       |
-|------------------|-----------------------------------|
-| PORT             | Server port (default: 5000)       |
-| JWT_SECRET       | JWT signing secret                |
-| DATABASE_URL     | PostgreSQL connection string      |
-| NODE_ENV         | Environment (development/production) |
-
----
-
-## 🩺 Health Check
-
-**Endpoint:** `/health`
-
-
-Displays a beautiful, professional HTML status page showing that the backend is running and healthy. Includes:
-- Project logo (from Cloudinary)
-- API version, environment, port
-- Animated heartbeat and modern UI
-
-**Screenshot:**
-![Health Status Page](health.png)
-
-**Note:** If you use an external logo, ensure your backend CSP allows it (see below).
-
-**Swagger Docs:** `/api-docs` (live API documentation)
 
 ---
 
@@ -133,6 +88,51 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 - Separation of validation logic in routes
 
 ---
+
+## 🚀 Quick Demo: Run Locally in Minutes
+
+Get started in 3 steps:
+
+```sh
+git clone https://github.com/Lideeyah/Haid.git
+cd Haid
+npm install
+npm run dev
+```
+
+Then visit [`http://localhost:5000/api-docs`](http://localhost:5000/api-docs) for interactive Swagger docs.
+
+---
+
+## ⚙️ Environment Variables
+
+| Variable         | Description                       |
+|------------------|-----------------------------------|
+| PORT             | Server port (default: 5000)       |
+| JWT_SECRET       | JWT signing secret                |
+| DATABASE_URL     | PostgreSQL connection string      |
+| NODE_ENV         | Environment (development/production) |
+
+---
+
+## 🩺 Health Check
+
+**Endpoint:** `/health`
+
+Displays a beautiful, professional HTML status page showing that the backend is running and healthy. Includes:
+- Project logo (from Cloudinary)
+- API version, environment, port
+- Animated heartbeat and modern UI
+
+**Screenshot:**
+![Health Status Page](health.png)
+
+**Note:** If you use an external logo, ensure your backend CSP allows it (see below).
+
+**Swagger Docs:** `/api-docs` (live API documentation)
+
+---
+
 
 ## 👥 User Roles
 
