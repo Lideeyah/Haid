@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/badge/Prisma-ORM-purple?style=flat-square" alt="Prisma" />
     <img src="https://img.shields.io/badge/Swagger-API-yellow?style=flat-square" alt="Swagger" />
   </p>
-  <p><i>Secure, scalable backend for humanitarian aid distribution</i></p>
+</div>
 </div>
 
 ## Overview
@@ -43,6 +43,43 @@ _AKA Buzz brain_
 | [Setup & Usage](#setup--usage) | Getting started |
 | [Contributing](#contributing) | How to contribute |
 | [License](#license) | License info |
+
+---
+
+## 🌐 Live Hosted API
+
+Your backend is live and ready to test:
+
+- **Base URL:** [`https://haid.onrender.com`](https://haid.onrender.com)
+- **Swagger Docs:** [`https://haid.onrender.com/api-docs`](https://haid.onrender.com/api-docs)
+- **Health Check:** [`https://haid.onrender.com/health`](https://haid.onrender.com/health)
+
+---
+
+## 🚀 Quick Demo
+
+Get started in 3 steps:
+
+```sh
+git clone https://github.com/Lideeyah/Haid.git
+cd Haid
+npm install
+npm run dev
+```
+
+Then visit [`http://localhost:5000/api-docs`](http://localhost:5000/api-docs) for interactive Swagger docs.
+
+---
+
+## ⚙️ Environment Variables
+
+| Variable         | Description                       |
+|------------------|-----------------------------------|
+| PORT             | Server port (default: 5000)       |
+| JWT_SECRET       | JWT signing secret                |
+| DATABASE_URL     | PostgreSQL connection string      |
+| NODE_ENV         | Environment (development/production) |
+
 ---
 
 ## 🩺 Health Check
@@ -131,6 +168,12 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 | GET    | `/api/donor/dashboard`        | Donor           | Donor dashboard KPIs               |
 | GET    | `/api/auditor/dashboard`      | Auditor         | Auditor dashboard logs/verification|
 </details>
+
+---
+
+## 🔗 Sample Test Flow
+
+Register NGO → Create Event → Register Volunteer → Assign Volunteer → Register Beneficiary → Volunteer Scans Beneficiary → View Dashboard
 
 ---
 
