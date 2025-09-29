@@ -6,7 +6,7 @@
   
   <p>
     <a href="https://github.com/Lideeyah/Haid/actions"><img src="https://img.shields.io/github/workflow/status/Lideeyah/Haid/CI?style=flat-square" alt="Build Status" /></a>
-    <a href="https://github.com/Lideeyah/Haid/blob/alpha-backend/LICENSE"><img src="https://img.shields.io/github/license/Lideeyah/Haid?style=flat-square" alt="License" /></a>
+    <a href="https://github.com/Lideeyah/Haid/tree/alpha-backend"><img src="https://img.shields.io/github/license/Lideeyah/Haid?style=flat-square" alt="License" /></a>
     <img src="https://img.shields.io/badge/Node.js-18.x-green?style=flat-square" alt="Node.js" />
     <img src="https://img.shields.io/badge/PostgreSQL-15.x-blue?style=flat-square" alt="PostgreSQL" />
     <img src="https://img.shields.io/badge/Prisma-ORM-purple?style=flat-square" alt="Prisma" />
