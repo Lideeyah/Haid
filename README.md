@@ -29,12 +29,16 @@ _AKA Buzz brain_
 ## 📚 Table of Contents
 | Section | Description |
 |---|---|
+| [Live Hosted API](#live-hosted-api) | Hosted backend URLs |
 | [Features](#features) | Key backend features |
 | [Tech Stack](#tech-stack) | Technologies used |
 | [Architecture](#architecture) | Project structure |
+| [Quick Demo](#quick-demo-run-locally-in-minutes) | Fast local setup |
+| [Environment Variables](#environment-variables) | Key .env settings |
+| [Health Check](#health-check) | Backend status page |
 | [User Roles](#user-roles) | Supported roles |
 | [API Endpoints](#api-endpoints) | Endpoint details |
-| [Health Check](#health-check) | Backend status page |
+| [Sample Test Flow](#sample-test-flow) | Logical API journey |
 | [Authentication](#authentication) | Auth logic |
 | [Event & Aid Logic](#event--aid-logic) | Event/aid flow |
 | [Dashboards](#dashboards) | Dashboard endpoints |
