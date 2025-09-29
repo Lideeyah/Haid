@@ -1,0 +1,78 @@
+Here’s how to test your Haid backend API with Postman:
+
+Start Your Server
+In your project folder, run:
+npx nodemon index.js
+or
+node index.js
+
+Make sure you see "Server started on port 5000" (or your configured port).
+
+Test Endpoints in Postman
+A. Register a Beneficiary
+
+Method: POST
+URL: http://localhost:5000/api/auth/register
+Body (JSON):
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "beneficiary"
+}
+
+
+You should get back a beneficiaryDid and qrCodeUrl.
+B. Register an NGO/Volunteer
+
+Method: POST
+URL: http://localhost:5000/api/auth/register
+Body (JSON):
+{
+  "name": "NGO User",
+  "email": "ngo@example.com",
+  "role": "ngo",
+  "password": "password123"
+}
+
+You should get a success message.
+C. Login as NGO/Volunteer
+
+Method: POST
+URL: http://localhost:5000/api/auth/login
+Body (JSON):
+{
+  "email": "ngo@example.com",
+  "password": "password123"
+}
+You’ll get a JWT token. Copy this for the next steps.
+
+D. Create an Event (as NGO)
+
+Method: POST
+URL: http://localhost:5000/api/events
+Headers:
+Authorization: Bearer <paste your JWT token here>
+Body (JSON):
+{
+  "name": "Food Distribution – Day 1 Morning",
+  "type": "food",
+  "location": "Community Center",
+  "startTime": "2025-09-28T09:00:00Z",
+  "endTime": "2025-09-28T12:00:00Z"
+}
+
+
+You should get back the event details.
+E. Scan a Beneficiary (as Volunteer)
+
+Login as a volunteer, get their JWT token, and use:
+Method: POST
+URL: http://localhost:5000/api/scans
+Headers:
+Authorization: Bearer <volunteer JWT token>
+Body (JSON):
+{
+  "eventId": "<event _id from previous step>",
+  "beneficiaryDid": "<beneficiaryDid from registration>"
+}
+You’ll get status: "collected" or "duplicate-blocked".
