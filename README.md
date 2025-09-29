@@ -19,6 +19,10 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 
 ---
 
+## 🧑‍💻 Author
+
+**Nduoma Chinomso Christian**  
+_AKA Buzz brain_
 
 ---
 
@@ -41,8 +45,6 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 
 ---
 
----
-
 ## ✨ Features
 - Multi-role authentication: Beneficiary, Donor, Volunteer, NGO, Auditor
 - Event creation, volunteer assignment, and aid distribution tracking
@@ -52,13 +54,6 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 - Robust validation and error handling
 - Secure JWT authentication (HttpOnly cookies)
 - Fully documented Swagger API
-
----
-
-## 🧑‍💻 Author
-
-**Nduoma Chinomso Christian**  
-_AKA Buzz brain_
 
 ---
 
