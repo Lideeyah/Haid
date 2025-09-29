@@ -56,7 +56,7 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 - Animated heartbeat and modern UI
 
 **Screenshot:**
-![Health Status Page](./route/health.png)
+![Health Status Page](health.png)
 
 **Note:** If you use an external logo, ensure your backend CSP allows it (see below).
 
