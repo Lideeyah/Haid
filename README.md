@@ -6,7 +6,6 @@
   
   <p>
     <a href="https://github.com/Lideeyah/Haid/actions"><img src="https://img.shields.io/github/workflow/status/Lideeyah/Haid/CI?style=flat-square" alt="Build Status" /></a>
-    <a href="https://github.com/Lideeyah/Haid/tree/alpha-backend"><img src="https://img.shields.io/github/license/Lideeyah/Haid?style=flat-square" alt="License" /></a>
     <img src="https://img.shields.io/badge/Node.js-18.x-green?style=flat-square" alt="Node.js" />
     <img src="https://img.shields.io/badge/PostgreSQL-15.x-blue?style=flat-square" alt="PostgreSQL" />
     <img src="https://img.shields.io/badge/Prisma-ORM-purple?style=flat-square" alt="Prisma" />
@@ -53,6 +52,13 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 - Robust validation and error handling
 - Secure JWT authentication (HttpOnly cookies)
 - Fully documented Swagger API
+
+---
+
+## 🧑‍💻 Author
+
+**Nduoma Chinomso Christian**  
+_AKA Buzz brain_
 
 ---
 
@@ -659,11 +665,3 @@ MIT
 - All endpoints, request/response schemas, and error formats are documented in Swagger (`/api-docs`)
 - For any questions, reach out via GitHub Issues
 
----
-
-
----
-
-<div align="center">
-  <b>Made with ❤️ by the Haid Team</b>
-</div>
