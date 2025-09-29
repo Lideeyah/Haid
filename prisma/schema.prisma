@@ -17,27 +17,40 @@ model User {
   id           String    @id @default(uuid())
   name         String
   email        String    @unique
-  password     String?   // Only for NGO/volunteer/admin
-  role         String
+  password     String?
+  role         Role
   simulatedDid String?   @unique
   qrCodeUrl    String?
   createdAt    DateTime  @default(now())
   events       Event[]   @relation("CreatedEvents")
   aidLogs      AidLog[]  @relation("BeneficiaryLogs")
   volunteerLogs AidLog[] @relation("VolunteerLogs")
+  assignedEvents Event[] @relation("EventVolunteers")
+}
+
+enum Role {
+  beneficiary
+  donor
+  volunteer
+  ngo
+  auditor
 }
 
 model Event {
-  id         String    @id @default(uuid())
-  name       String
-  type       String
-  location   String
-  createdBy  String
-  startTime  DateTime
-  endTime    DateTime
-  createdAt  DateTime  @default(now())
-  creator    User      @relation("CreatedEvents", fields: [createdBy], references: [id])
-  aidLogs    AidLog[]
+  id          String    @id @default(uuid())
+  name        String
+  type        String
+  location    String
+  description String?
+  quantity    Int?
+  supplies    String[]
+  createdBy   String
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime  @default(now())
+  creator     User      @relation("CreatedEvents", fields: [createdBy], references: [id])
+  aidLogs     AidLog[]
+  volunteers  User[]    @relation("EventVolunteers")
 }
 
 model AidLog {

@@ -13,46 +13,40 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  *   description: NGO dashboard endpoints
  */
 
-const statsValidation = [
-	param('eventId').isUUID().withMessage('Valid eventId required')
-];
-
 /**
  * @swagger
- * /api/dashboard/stats/{eventId}:
+ * /api/dashboard/general-stats:
  *   get:
- *     summary: Get event stats (NGO only)
+ *     summary: Get general dashboard stats (admin, NGO only)
  *     tags: [Dashboard]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: eventId
- *         schema:
- *           type: string
- *         required: true
- *         description: Event MongoDB ID
  *     responses:
  *       200:
- *         description: Event stats
+ *         description: General dashboard statistics
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 totalServed:
+ *                 eventsCount:
  *                   type: integer
- *                 duplicates:
+ *                 volunteersCount:
  *                   type: integer
- *       400:
- *         description: Validation error
+ *                 beneficiariesCount:
+ *                   type: integer
+ *                 aidDistributed:
+ *                   type: integer
+ *                 aidTypes:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
- *       404:
- *         description: Event not found
  */
-router.get('/stats/:eventId', authMiddleware, roleMiddleware(['ngo', 'admin']), statsValidation, dashboardController.getStats);
+// General dashboard stats endpoint
+router.get('/general-stats', authMiddleware, roleMiddleware(['admin', 'ngo']), dashboardController.getGeneralStats);
 
 module.exports = router;

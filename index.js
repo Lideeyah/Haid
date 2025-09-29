@@ -10,6 +10,8 @@ const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 // Swagger setup
 const swaggerOptions = {
@@ -51,10 +53,6 @@ const logger = winston.createLogger({
 	]
 });
 
-
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
 // Startup check for Prisma connection
 prisma.$connect()
 	.then(() => {
@@ -89,6 +87,9 @@ app.use('/api/auth', authLimiter, require('./src/routes/auth'));
 app.use('/api/events', require('./src/routes/events'));
 app.use('/api/scans', require('./src/routes/scans'));
 app.use('/api/dashboard', require('./src/routes/dashboard'));
+app.use('/api/volunteers', require('./src/routes/volunteers'));
+app.use('/api/donor', require('./src/routes/donor'));
+app.use('/api/auditor', require('./src/routes/auditor'));
 
 app.get('/', (req, res) => res.send('Haid API running'));
 

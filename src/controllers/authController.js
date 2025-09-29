@@ -40,7 +40,7 @@ exports.register = async (req, res, next) => {
     if (role === 'beneficiary') {
       return res.status(201).json({ beneficiaryDid: simulatedDid, qrCodeUrl });
     }
-    res.status(201).json({ message: 'User registered' });
+    res.status(201).json({ message: 'User registered', user: user });
   } catch (err) {
     next(err);
   }
@@ -65,7 +65,7 @@ exports.login = async (req, res, next) => {
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
-    res.json({ message: 'Login successful' });
+    res.json({ message: 'Login successful', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     next(err);
   }

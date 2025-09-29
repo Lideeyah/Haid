@@ -1,6 +1,7 @@
-Here’s how to test your Haid backend API with Postman:
+Haid Backend API – Postman Testing Guide
 
 Start Your Server
+-----------------
 In your project folder, run:
 npx nodemon index.js
 or
@@ -9,8 +10,10 @@ node index.js
 Make sure you see "Server started on port 5000" (or your configured port).
 
 Test Endpoints in Postman
-A. Register a Beneficiary
+-------------------------
 
+A. Register a Beneficiary - Tested ✅
+-------------------------
 Method: POST
 URL: http://localhost:5000/api/auth/register
 Body (JSON):
@@ -19,11 +22,14 @@ Body (JSON):
   "email": "john@example.com",
   "role": "beneficiary"
 }
+Response:
+{
+  "beneficiaryDid": "...",
+  "qrCodeUrl": "..."
+}
 
-
-You should get back a beneficiaryDid and qrCodeUrl.
-B. Register an NGO/Volunteer
-
+B. Register an NGO - Tested ✅
+------------------
 Method: POST
 URL: http://localhost:5000/api/auth/register
 Body (JSON):
@@ -33,10 +39,29 @@ Body (JSON):
   "role": "ngo",
   "password": "password123"
 }
+Response:
+{
+  "message": "User registered"
+}
 
-You should get a success message.
-C. Login as NGO/Volunteer
+C. Register a Volunteer - Tested ✅
+-----------------------
+Method: POST
+URL: http://localhost:5000/api/auth/register
+Body (JSON):
+{
+  "name": "Volunteer User",
+  "email": "volunteer@example.com",
+  "role": "volunteer",
+  "password": "password123"
+}
+Response:
+{
+  "message": "User registered"
+}
 
+D. Login as NGO/Volunteer - Tested ✅
+-------------------------
 Method: POST
 URL: http://localhost:5000/api/auth/login
 Body (JSON):
@@ -44,35 +69,190 @@ Body (JSON):
   "email": "ngo@example.com",
   "password": "password123"
 }
-You’ll get a JWT token. Copy this for the next steps.
+Response:
+{
+  "message": "Login successful"
+}
+JWT token is set in HttpOnly cookies for subsequent requests.
 
-D. Create an Event (as NGO)
-
+E. Create an Event (as NGO) - Tested ✅
+---------------------------
 Method: POST
 URL: http://localhost:5000/api/events
-Headers:
-Authorization: Bearer <paste your JWT token here>
 Body (JSON):
 {
   "name": "Food Distribution – Day 1 Morning",
   "type": "food",
   "location": "Community Center",
+  "description": "Morning food distribution for families",
+  "quantity": 100,
+  "supplies": ["rice", "beans", "cooking oil", "salt"],
   "startTime": "2025-09-28T09:00:00Z",
   "endTime": "2025-09-28T12:00:00Z"
 }
+Response:
+{
+  "id": "...",
+  "name": "...",
+  "type": "...",
+  "location": "...",
+  "description": "...",
+  "quantity": ...,
+  "supplies": [...],
+  "volunteersCount": ...,
+  "volunteers": [...],
+  "totalServed": ...,
+  "duplicates": ...,
+  "startTime": "...",
+  "endTime": "...",
+  "createdAt": "..."
+}
 
+F. List Events - Tested ✅
+--------------
+Method: GET
+URL: http://localhost:5000/api/events
+Response:
+[
+  {
+    "id": "...",
+    "name": "...",
+    "type": "...",
+    "location": "...",
+    "description": "...",
+    "quantity": ...,
+    "supplies": [...],
+    "volunteersCount": ...,
+    "startTime": "...",
+    "endTime": "...",
+    "createdAt": "..."
+  },
+  ...
+]
 
-You should get back the event details.
-E. Scan a Beneficiary (as Volunteer)
+G. Get Single Event - Tested ✅
+-------------------
+Method: GET
+URL: http://localhost:5000/api/events/:id
+Response:
+{
+  "id": "...",
+  "name": "...",
+  "type": "...",
+  "location": "...",
+  "description": "...",
+  "quantity": ...,
+  "supplies": [...],
+  "volunteersCount": ...,
+  "volunteers": [...],
+  "totalServed": ...,
+  "duplicates": ...,
+  "startTime": "...",
+  "endTime": "...",
+  "createdAt": "..."
+}
 
-Login as a volunteer, get their JWT token, and use:
+H. Scan a Beneficiary (as Volunteer) - Tested ✅
+------------------------------------
 Method: POST
 URL: http://localhost:5000/api/scans
-Headers:
-Authorization: Bearer <volunteer JWT token>
 Body (JSON):
 {
-  "eventId": "<event _id from previous step>",
+  "eventId": "<event id from previous step>",
   "beneficiaryDid": "<beneficiaryDid from registration>"
 }
-You’ll get status: "collected" or "duplicate-blocked".
+Response (first scan):
+{
+  "status": "collected",
+  "transactionId": "...",
+  "timestamp": "..."
+}
+Response (duplicate scan):
+{
+  "status": "duplicate-blocked"
+}
+
+I. Assign Volunteer to Event (as NGO)
+-------------------------------------
+Method: POST
+URL: http://localhost:5000/api/events/assign-volunteer
+Body (JSON):
+{
+  "eventId": "<event id>",
+  "volunteerId": "<volunteer id>"
+}
+Response:
+{
+  "message": "Volunteer assigned to event"
+}
+
+J. Get All Volunteers (as NGO/Admin)
+------------------------------------
+Method: GET
+URL: http://localhost:5000/api/volunteers
+Response:
+[
+  {
+    "id": "...",
+    "name": "...",
+    "email": "...",
+    "role": "volunteer",
+    ...
+  },
+  ...
+]
+
+K. Get Single Volunteer (as NGO/Admin)
+--------------------------------------
+Method: GET
+URL: http://localhost:5000/api/volunteers/:id
+Response:
+{
+  "id": "...",
+  "name": "...",
+  "email": "...",
+  "role": "volunteer",
+  ...
+}
+
+L. General Dashboard Stats (as NGO/Admin)
+-----------------------------------------
+Method: GET
+URL: http://localhost:5000/api/dashboard/general-stats
+Response:
+{
+  "eventsCount": ...,
+  "volunteersCount": ...,
+  "beneficiariesCount": ...,
+  "aidDistributed": ...,
+  "aidTypes": [...]
+}
+
+M. Donor Dashboard (as Donor)
+-----------------------------
+Method: GET
+URL: http://localhost:5000/api/donor/dashboard
+Response:
+{
+  "totalRecipientsServed": ...,
+  "distributionProgress": "...",
+  "geographicImpact": [...]
+}
+
+N. Auditor Dashboard (as Auditor)
+---------------------------------
+Method: GET
+URL: http://localhost:5000/api/auditor/dashboard?eventId=<eventId>&date=<YYYY-MM-DD>
+Response:
+{
+  "logs": [...],
+  "guardianMatch": true
+}
+
+Notes:
+------
+- All protected endpoints require login; JWT is stored in HttpOnly cookies.
+- Use the correct role for each endpoint (NGO, volunteer, donor, auditor, admin).
+- Replace `<event id>`, `<volunteer id>`, `<beneficiaryDid>` with actual values from previous responses.
+
+Swagger docs will be updated after all backend changes are complete.

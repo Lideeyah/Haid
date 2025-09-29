@@ -10,7 +10,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  * @swagger
  * tags:
  *   name: Scans
- *   description: Aid collection scan endpoints
+ *   description: Aid distribution scanning (volunteer only)
  */
 
 const scanValidation = [
@@ -22,7 +22,7 @@ const scanValidation = [
  * @swagger
  * /api/scans:
  *   post:
- *     summary: Log aid collection by scanning beneficiary QR (volunteer only)
+ *     summary: Scan beneficiary QR code and log aid distribution (volunteer only)
  *     tags: [Scans]
  *     security:
  *       - bearerAuth: []
@@ -38,13 +38,14 @@ const scanValidation = [
  *             properties:
  *               eventId:
  *                 type: string
- *                 description: Event MongoDB ID
+ *                 format: uuid
+ *                 description: Event PostgreSQL UUID
  *               beneficiaryDid:
  *                 type: string
- *                 description: Beneficiary simulated DID
+ *                 description: Beneficiary DID
  *     responses:
  *       200:
- *         description: Aid collection status
+ *         description: Aid log created or duplicate blocked
  *         content:
  *           application/json:
  *             schema:
@@ -56,18 +57,24 @@ const scanValidation = [
  *                       enum: [collected]
  *                     transactionId:
  *                       type: string
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
  *                 - type: object
  *                   properties:
  *                     status:
  *                       type: string
  *                       enum: [duplicate-blocked]
  *       400:
- *         description: Validation error
+ *         description: Validation error (invalid eventId or beneficiaryDid)
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden
+ *         description: Volunteer not assigned to event
+ *       404:
+ *         description: Event or beneficiary not found
  */
+// Scan beneficiary QR code and log aid distribution (volunteer only)
 router.post('/', authMiddleware, roleMiddleware(['volunteer', 'admin']), scanValidation, scanController.scan);
 
 module.exports = router;
