@@ -1,28 +1,50 @@
-# 🌍 Haid Humanitarian Aid Backend
+
+<div align="center">
+  <img src="https://res.cloudinary.com/df2q6gyuq/image/upload/v1759163480/haid-logo_uwsyvc.jpg" alt="Haid Logo" width="120" />
+  
+  <h1>🌍 <b>Haid Humanitarian Aid Backend</b></h1>
+  
+  <p>
+    <a href="https://github.com/Lideeyah/Haid/actions"><img src="https://img.shields.io/github/workflow/status/Lideeyah/Haid/CI?style=flat-square" alt="Build Status" /></a>
+    <a href="https://github.com/Lideeyah/Haid/blob/alpha-backend/LICENSE"><img src="https://img.shields.io/github/license/Lideeyah/Haid?style=flat-square" alt="License" /></a>
+    <img src="https://img.shields.io/badge/Node.js-18.x-green?style=flat-square" alt="Node.js" />
+    <img src="https://img.shields.io/badge/PostgreSQL-15.x-blue?style=flat-square" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Prisma-ORM-purple?style=flat-square" alt="Prisma" />
+    <img src="https://img.shields.io/badge/Swagger-API-yellow?style=flat-square" alt="Swagger" />
+  </p>
+  <p><i>Secure, scalable backend for humanitarian aid distribution</i></p>
+</div>
 
 ## Overview
 Haid is a secure, scalable backend for humanitarian aid distribution, built with Node.js, Express, and Prisma/PostgreSQL. It supports multiple user roles, robust event and scan tracking, and advanced dashboards for donors, NGOs, volunteers, and auditors. The API is fully documented with Swagger and designed for easy frontend integration.
 
 ---
 
-## Table of Contents
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [User Roles](#user-roles)
-- [API Endpoints](#api-endpoints)
-- [Authentication](#authentication)
-- [Event & Aid Logic](#event--aid-logic)
-- [Dashboards](#dashboards)
-- [Error Handling](#error-handling)
-- [Blockchain Roadmap](#blockchain-roadmap)
-- [Setup & Usage](#setup--usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
-## Features
+## 📚 Table of Contents
+| Section | Description |
+|---|---|
+| [Features](#features) | Key backend features |
+| [Tech Stack](#tech-stack) | Technologies used |
+| [Architecture](#architecture) | Project structure |
+| [User Roles](#user-roles) | Supported roles |
+| [API Endpoints](#api-endpoints) | Endpoint details |
+| [Authentication](#authentication) | Auth logic |
+| [Event & Aid Logic](#event--aid-logic) | Event/aid flow |
+| [Dashboards](#dashboards) | Dashboard endpoints |
+| [Error Handling](#error-handling) | Error responses |
+| [Blockchain Roadmap](#blockchain-roadmap) | Future plans |
+| [Setup & Usage](#setup--usage) | Getting started |
+| [Contributing](#contributing) | How to contribute |
+| [License](#license) | License info |
+
+---
+
+---
+
+## ✨ Features
 - Multi-role authentication: Beneficiary, Donor, Volunteer, NGO, Auditor
 - Event creation, volunteer assignment, and aid distribution tracking
 - QR code generation for beneficiaries (DID, to be blockchain-integrated)
@@ -34,7 +56,7 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 - **Node.js** & **Express.js**: RESTful API
 - **Prisma**: ORM for PostgreSQL
 - **PostgreSQL**: Relational database
@@ -46,7 +68,7 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 - Modular controllers for each domain (auth, events, scans, dashboard, etc.)
 - Middleware for authentication, role checks, and error handling
 - Prisma schema for users, events, aid logs, and roles
@@ -54,22 +76,42 @@ Haid is a secure, scalable backend for humanitarian aid distribution, built with
 
 ---
 
-## User Roles
-- **Beneficiary**: Receives aid, has a QR code (simulated DID)
-- **Donor**: Views impact dashboard
-- **Volunteer**: Assigned to events, scans beneficiaries
-- **NGO**: Creates events, manages volunteers
-- **Auditor**: Verifies distribution, views audit dashboard
+## 👥 User Roles
+
+| Role         | Description                                      | Key Endpoints                |
+|--------------|--------------------------------------------------|------------------------------|
+| Beneficiary  | Receives aid, has a QR code (simulated DID)      | Registration                 |
+| Donor        | Views impact dashboard                           | `/api/donor/dashboard`       |
+| Volunteer    | Assigned to events, scans beneficiaries          | `/api/scans`                 |
+| NGO          | Creates events, manages volunteers                | `/api/events`, `/api/volunteers` |
+| Auditor      | Verifies distribution, views audit dashboard     | `/api/auditor/dashboard`     |
 
 ---
 
-## API Endpoints
 
-All endpoints are prefixed with `/api/`.
+## 🚦 API Endpoints
+
+<details>
+<summary><b>Endpoint Summary Table</b></summary>
+
+| Method | Endpoint                       | Role(s)         | Description                       |
+|--------|-------------------------------|-----------------|------------------------------------|
+| POST   | `/api/auth/register`          | All             | Register user                      |
+| POST   | `/api/auth/login`             | All             | Login, get JWT cookie              |
+| POST   | `/api/auth/logout`            | All             | Logout                             |
+| POST   | `/api/events`                 | NGO             | Create event                       |
+| GET    | `/api/events`                 | Authenticated   | List events                        |
+| GET    | `/api/events/:id`             | Authenticated   | Get event details                  |
+| POST   | `/api/events/assign-volunteer`| NGO             | Assign volunteer                   |
+| POST   | `/api/scans`                  | Volunteer       | Scan beneficiary QR                |
+| GET    | `/api/volunteers`             | Admin, NGO      | List volunteers                    |
+| GET    | `/api/volunteers/:id`         | Admin, NGO      | Get volunteer details              |
+| GET    | `/api/dashboard/general-stats`| Admin, NGO      | General dashboard stats            |
+| GET    | `/api/donor/dashboard`        | Donor           | Donor dashboard KPIs               |
+| GET    | `/api/auditor/dashboard`      | Auditor         | Auditor dashboard logs/verification|
+</details>
 
 ---
-
-### Auth
 
 #### `POST /api/auth/register`
 **Register a new user (beneficiary, donor, volunteer, NGO, auditor)**
@@ -84,6 +126,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Success Response:**
+`201 Created`
 ```json
 {
   "message": "User registered",
@@ -97,6 +140,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Beneficiary Response:**
+`201 Created`
 ```json
 {
   "beneficiaryDid": "did:haid:...",
@@ -104,10 +148,14 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Valid email is required", "param": "email", "location": "body" } ]
 }
+```
+`400 Bad Request`
+```json
 {
   "message": "User already exists"
 }
@@ -126,6 +174,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Success Response:**
+`200 OK`
 ```json
 {
   "message": "Login successful",
@@ -138,10 +187,14 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "message": "Invalid credentials"
 }
+```
+`400 Bad Request`
+```json
 {
   "errors": [ { "msg": "Valid email is required", "param": "email", "location": "body" } ]
 }
@@ -153,6 +206,7 @@ All endpoints are prefixed with `/api/`.
 **Logout user (clears JWT cookie)**
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "message": "Logged out successfully"
@@ -180,6 +234,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Success Response:**
+`201 Created`
 ```json
 {
   "id": "...",
@@ -199,6 +254,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Event name is required", "param": "name", "location": "body" } ]
@@ -211,6 +267,7 @@ All endpoints are prefixed with `/api/`.
 **List all events**
 
 **Success Response:**
+`200 OK`
 ```json
 [
   {
@@ -229,6 +286,7 @@ All endpoints are prefixed with `/api/`.
 **Get a single event by ID**
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "id": "...",
@@ -237,10 +295,14 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Valid event id required", "param": "id", "location": "params" } ]
 }
+```
+`404 Not Found`
+```json
 {
   "message": "Event not found"
 }
@@ -259,12 +321,14 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Success Response:**
+`200 OK`
 ```json
 {
   "message": "Volunteer assigned to event"
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Valid eventId required", "param": "eventId", "location": "body" } ]
@@ -286,7 +350,7 @@ All endpoints are prefixed with `/api/`.
 }
 ```
 **Success Responses:**
-Aid collected:
+`200 OK` (Aid collected)
 ```json
 {
   "status": "collected",
@@ -294,23 +358,33 @@ Aid collected:
   "timestamp": "2025-09-29T12:34:56Z"
 }
 ```
-Duplicate blocked:
+`200 OK` (Duplicate blocked)
 ```json
 {
   "status": "duplicate-blocked"
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Valid eventId is required", "param": "eventId", "location": "body" } ]
 }
+```
+`403 Forbidden`
+```json
 {
   "message": "You are not assigned to this event."
 }
+```
+`404 Not Found`
+```json
 {
   "message": "Event not found"
 }
+```
+`404 Not Found`
+```json
 {
   "message": "Beneficiary not found"
 }
@@ -324,6 +398,7 @@ Duplicate blocked:
 **List all volunteers (admin, NGO only)**
 
 **Success Response:**
+`200 OK`
 ```json
 [
   {
@@ -342,6 +417,7 @@ Duplicate blocked:
 **Get volunteer details by ID**
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "id": "...",
@@ -352,6 +428,7 @@ Duplicate blocked:
 }
 ```
 **Error Response:**
+`404 Not Found`
 ```json
 {
   "message": "Volunteer not found"
@@ -366,6 +443,7 @@ Duplicate blocked:
 **Get general dashboard stats (admin, NGO only)**
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "eventsCount": 10,
@@ -382,6 +460,7 @@ Duplicate blocked:
 **Get donor dashboard KPIs and impact (donor only)**
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "recipientsServed": 120,
@@ -407,6 +486,7 @@ Duplicate blocked:
 - `date` (optional): Filter logs by date (YYYY-MM-DD)
 
 **Success Response:**
+`200 OK`
 ```json
 {
   "logs": [
@@ -423,10 +503,14 @@ Duplicate blocked:
 }
 ```
 **Error Responses:**
+`400 Bad Request`
 ```json
 {
   "errors": [ { "msg": "Invalid date format. Use YYYY-MM-DD.", "param": "date", "location": "query" } ]
 }
+```
+`404 Not Found`
+```json
 {
   "message": "Event not found."
 }
@@ -434,14 +518,14 @@ Duplicate blocked:
 
 ---
 
-## Authentication
+## 🔐 Authentication
 - JWT tokens are set in HttpOnly cookies after login
 - All protected endpoints require authentication
 - Role-based access enforced via middleware
 
 ---
 
-## Event & Aid Logic
+## 🎫 Event & Aid Logic
 - Events are created by NGOs, with volunteers assigned
 - Beneficiaries receive a QR code (simulated DID)
 - Volunteers scan QR codes to log aid distribution
@@ -450,7 +534,7 @@ Duplicate blocked:
 
 ---
 
-## Dashboards
+## 📊 Dashboards
 ### Donor Dashboard
 - KPIs: Total recipients served, distribution progress, geographic impact
 - Endpoint: `GET /api/donor/dashboard`
@@ -507,7 +591,7 @@ Duplicate blocked:
 
 ---
 
-## Error Handling
+## ❗ Error Handling
 - All endpoints return detailed error messages and validation errors
 - Example error response:
 ```json
@@ -521,14 +605,14 @@ Duplicate blocked:
 
 ---
 
-## Blockchain Roadmap
+## ⛓️ Blockchain Roadmap
 - **Current:** Beneficiary DID is simulated and QR code generated
 - **Future:** DID will be issued and verified via blockchain (Hedera Guardian)
 - Auditor dashboard will compare aid logs with blockchain indexer
 
 ---
 
-## Setup & Usage
+## 🚀 Setup & Usage
 1. Clone the repo:
    ```sh
    git clone https://github.com/Lideeyah/Haid.git
@@ -551,18 +635,18 @@ Duplicate blocked:
 
 ---
 
-## Contributing
+## 🤝 Contributing
 - Please open issues or pull requests for improvements
 - Blockchain integration is coming soon—feedback welcome!
 
 ---
 
-## License
+## 📄 License
 MIT
 
 ---
 
-## ✨ UI/UX & API Design Philosophy
+## 🖌️ UI/UX & API Design Philosophy
 - Clear, consistent, and predictable endpoints
 - Role-based access and validation for security
 - All responses are structured for easy frontend consumption
@@ -571,14 +655,15 @@ MIT
 
 ---
 
-## 🚀 Quick Reference
+## 🏁 Quick Reference
 - All endpoints, request/response schemas, and error formats are documented in Swagger (`/api-docs`)
 - For any questions, reach out via GitHub Issues
 
 ---
 
-> **Note:** This backend is designed for rapid humanitarian deployment. Blockchain features (DID, Guardian verification) will be integrated soon. All simulated DIDs and QR codes will be replaced with real, verifiable credentials.
 
 ---
 
-### Made with ❤️ by the Haid Team
+<div align="center">
+  <b>Made with ❤️ by the Haid Team</b>
+</div>
