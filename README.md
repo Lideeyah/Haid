@@ -34,6 +34,7 @@ _AKA Buzz brain_
 | [Architecture](#architecture) | Project structure |
 | [User Roles](#user-roles) | Supported roles |
 | [API Endpoints](#api-endpoints) | Endpoint details |
+| [Health Check](#health-check) | Backend status page |
 | [Authentication](#authentication) | Auth logic |
 | [Event & Aid Logic](#event--aid-logic) | Event/aid flow |
 | [Dashboards](#dashboards) | Dashboard endpoints |
@@ -42,6 +43,24 @@ _AKA Buzz brain_
 | [Setup & Usage](#setup--usage) | Getting started |
 | [Contributing](#contributing) | How to contribute |
 | [License](#license) | License info |
+---
+
+## 🩺 Health Check
+
+**Endpoint:** `/health`
+
+
+Displays a beautiful, professional HTML status page showing that the backend is running and healthy. Includes:
+- Project logo (from Cloudinary)
+- API version, environment, port
+- Animated heartbeat and modern UI
+
+**Screenshot:**
+![Health Status Page](./route/health.png)
+
+**Note:** If you use an external logo, ensure your backend CSP allows it (see below).
+
+**Swagger Docs:** `/api-docs` (live API documentation)
 
 ---
 
@@ -66,6 +85,7 @@ _AKA Buzz brain_
 - **Swagger**: API documentation
 - **express-validator**: Request validation
 - **helmet, morgan, winston**: Security & logging
+- **Custom Content Security Policy (CSP)**: Allows images from Cloudinary for branding and UI (see `/health` endpoint and logo usage)
 
 ---
 
@@ -647,7 +667,9 @@ MIT
 
 ---
 
-## 🖌️ UI/UX & API Design Philosophy
+- Health check endpoint (`/health`) with stunning HTML status page for live backend status.
+- README and health page visuals enhanced for professional presentation.
+- API responses include HTTP status codes for frontend clarity.
 - Clear, consistent, and predictable endpoints
 - Role-based access and validation for security
 - All responses are structured for easy frontend consumption
