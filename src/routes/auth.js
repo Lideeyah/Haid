@@ -69,6 +69,7 @@ const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
 const authController = require("../controllers/authController");
+const authMiddleware = require("../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -231,4 +232,25 @@ router.post("/login", loginValidation, authController.login);
  */
 router.post("/logout", authController.logout);
 
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current authenticated user
+ *     tags: [Auth]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/me', authMiddleware, authController.getMe);
+
 module.exports = router;
+

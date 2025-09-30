@@ -8,8 +8,18 @@ function authMiddleware(req, res, next) {
   if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    // Fetch full user profile from DB
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    prisma.user.findUnique({ where: { id: decoded.id } })
+      .then(user => {
+        if (!user) return res.status(401).json({ message: 'User not found' });
+        req.user = user;
+        next();
+      })
+      .catch(err => {
+        res.status(500).json({ message: 'Error fetching user profile' });
+      });
   } catch (err) {
     res.status(401).json({ message: 'Token is not valid' });
   }

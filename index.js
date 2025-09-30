@@ -125,7 +125,12 @@ const authLimiter = rateLimit({
 });
 
 // Routes
-app.use('/api/auth', authLimiter, require('./src/routes/auth'));
+// Mount /api/auth/me before rate limiter so it is not rate limited
+const authRouter = require('./src/routes/auth');
+const authController = require('./src/controllers/authController');
+const authMiddleware = require('./src/middleware/authMiddleware');
+app.get('/api/auth/me', authMiddleware, authController.getMe);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/events', require('./src/routes/events'));
 app.use('/api/scans', require('./src/routes/scans'));
 app.use('/api/dashboard', require('./src/routes/dashboard'));

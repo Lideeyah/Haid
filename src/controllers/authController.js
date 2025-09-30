@@ -105,3 +105,12 @@ exports.logout = (req, res) => {
   });
   res.json({ message: 'Logged out successfully' });
 };
+
+// Get current authenticated user profile
+exports.getMe = async (req, res) => {
+  // req.user should be set by authMiddleware after JWT verification
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  res.json({ user: req.user });
+};
