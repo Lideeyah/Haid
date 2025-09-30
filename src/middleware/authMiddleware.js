@@ -11,10 +11,9 @@ function authMiddleware(req, res, next) {
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Fetch full user profile from DB
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    prisma.user.findUnique({ where: { id: decoded.id } })
+    // Fetch full user profile from MongoDB
+    const User = require('../models/User');
+    User.findById(decoded.id)
       .then(user => {
         if (!user) return res.status(401).json({ message: 'User not found' });
         req.user = user;

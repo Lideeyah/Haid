@@ -114,7 +114,7 @@ router.get(
   "/:id",
   authMiddleware,
   roleMiddleware(["admin", "ngo"]),
-  param("id").isUUID().withMessage("Valid volunteer ID required"),
+  param("id").isMongoId().withMessage("Valid volunteer ID required"),
   volunteerController.getVolunteer
 );
 

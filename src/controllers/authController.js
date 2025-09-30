@@ -1,7 +1,6 @@
 // src/controllers/authController.js
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { generateAnchoredDID } = require('../utils/did');
@@ -15,9 +14,9 @@ exports.register = async (req, res, next) => {
   }
   try {
     const { name, email, password, role } = req.body;
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+  // Check if user exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
     let did, qrCodeUrl, hederaTx;
     const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
@@ -46,26 +45,23 @@ exports.register = async (req, res, next) => {
     }
 
     // Only create user in DB if Hedera succeeded, using the same UUID
-    const user = await prisma.user.create({
-      data: {
-        id: userId,
-        name,
-        email,
-        role,
-        password: hashedPassword,
-        did
-      }
+    const user = new User({
+      name,
+      email,
+      role,
+      password: hashedPassword,
+      did,
+      createdAt: new Date()
     });
+    await user.save();
 
     if (role === 'beneficiary') {
       qrCodeUrl = await generateQrCode(did);
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { qrCodeUrl }
-      });
+      user.qrCodeUrl = qrCodeUrl;
+      await user.save();
       return res.status(201).json({ beneficiaryDid: did, qrCodeUrl, hederaTx });
     }
-    res.status(201).json({ message: 'User registered', user: { ...user, did }, hederaTx });
+    res.status(201).json({ message: 'User registered', user: { ...user.toObject(), did }, hederaTx });
   } catch (err) {
     next(err);
   }
@@ -78,7 +74,7 @@ exports.login = async (req, res, next) => {
   }
   try {
     const { email, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
+  const user = await User.findOne({ email });
     if (!user || !user.password) return res.status(400).json({ message: 'Invalid credentials' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });

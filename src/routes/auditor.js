@@ -15,7 +15,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
 
 // Validation rules for auditor dashboard
 const dashboardValidation = [
-  query('eventId').optional().isUUID().withMessage('Valid eventId required'),
+  query('eventId').optional().isMongoId().withMessage('Valid eventId required'),
   query('date').optional().isISO8601().withMessage('Valid date required')
 ];
 

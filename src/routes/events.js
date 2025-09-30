@@ -120,12 +120,12 @@ const createEventValidation = [
 ];
 
 const getEventValidation = [
-  param("id").isUUID().withMessage("Valid event id required"),
+  param("id").isMongoId().withMessage("Valid event id required"),
 ];
 
 const assignVolunteerValidation = [
-  body("eventId").isUUID().withMessage("Valid eventId required"),
-  body("volunteerId").isUUID().withMessage("Valid volunteerId required"),
+  body("eventId").isMongoId().withMessage("Valid eventId required"),
+  body("volunteerId").isMongoId().withMessage("Valid volunteerId required"),
 ];
 
 /**

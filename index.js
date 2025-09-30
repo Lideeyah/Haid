@@ -11,8 +11,14 @@ const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    });
 
 // Swagger setup
 const swaggerOptions = {
@@ -55,27 +61,18 @@ const logger = winston.createLogger({
 });
 
 
-// Startup check for Prisma connection
-prisma.$connect()
-    .then(async () => {
-        logger.info('Prisma connected to PostgreSQL');
-        // Hedera topic setup
-        if (!process.env.HEDERA_TOPIC_ID) {
-            try {
-                const topicId = await createTopic();
-                logger.info('Created new Hedera topic: ' + topicId);
-                // You should manually add this topicId to your .env file for persistence
-            } catch (err) {
-                logger.error('Failed to create Hedera topic:', err);
-            }
-        } else {
-            logger.info('Using existing Hedera topic: ' + process.env.HEDERA_TOPIC_ID);
-        }
-    })
-    .catch((err) => {
-        logger.error('Prisma failed to connect:', err);
-        process.exit(1);
+// Startup check for MongoDB connection is handled above with mongoose.connect
+// Hedera topic setup
+if (!process.env.HEDERA_TOPIC_ID) {
+    createTopic().then(topicId => {
+        logger.info('Created new Hedera topic: ' + topicId);
+        // You should manually add this topicId to your .env file for persistence
+    }).catch(err => {
+        logger.error('Failed to create Hedera topic:', err);
     });
+} else {
+    logger.info('Using existing Hedera topic: ' + process.env.HEDERA_TOPIC_ID);
+}
 
 const app = express();
 

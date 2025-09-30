@@ -1,7 +1,8 @@
 // src/controllers/dashboardController.js
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const Event = require('../models/Event');
+const User = require('../models/User');
+const AidLog = require('../models/AidLog');
 const { validationResult } = require('express-validator');
 
 
@@ -9,23 +10,16 @@ const { validationResult } = require('express-validator');
 exports.getGeneralStats = async (req, res, next) => {
   try {
     // Number of events
-    const eventsCount = await prisma.event.count();
+    const eventsCount = await Event.countDocuments();
     // Number of volunteers
-    const volunteersCount = await prisma.user.count({ where: { role: 'volunteer' } });
+    const volunteersCount = await User.countDocuments({ role: 'volunteer' });
     // Number of beneficiaries
-    const beneficiariesCount = await prisma.user.count({ where: { role: 'beneficiary' } });
+    const beneficiariesCount = await User.countDocuments({ role: 'beneficiary' });
     // Aid distributed (total 'collected' logs)
-    const aidDistributed = await prisma.aidLog.count({ where: { status: 'collected' } });
+    const aidDistributed = await AidLog.countDocuments({ status: 'collected' });
     // Aid types distributed (distinct event types with at least one 'collected' aidLog)
-    const aidTypeRows = await prisma.event.findMany({
-      where: {
-        aidLogs: {
-          some: { status: 'collected' }
-        }
-      },
-      select: { type: true }
-    });
-    const aidTypes = [...new Set(aidTypeRows.map(row => row.type))];
+    const collectedAidLogs = await AidLog.find({ status: 'collected' }).populate('event');
+    const aidTypes = [...new Set(collectedAidLogs.map(log => log.event?.type).filter(Boolean))];
 
     res.json({
       eventsCount,

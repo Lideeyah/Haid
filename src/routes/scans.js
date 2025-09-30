@@ -14,7 +14,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  */
 
 const scanValidation = [
-	body('eventId').isUUID().withMessage('Valid eventId is required'),
+	body('eventId').isMongoId().withMessage('Valid eventId is required'),
 	body('beneficiaryDid').isString().trim().notEmpty().withMessage('Valid beneficiaryDid is required')
 ];
 

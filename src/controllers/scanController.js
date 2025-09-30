@@ -1,7 +1,8 @@
 // src/controllers/scanController.js
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const Event = require('../models/Event');
+const User = require('../models/User');
+const AidLog = require('../models/AidLog');
 const { validationResult } = require('express-validator');
 
 const { submitMessage } = require("../utils/hedera");
@@ -16,43 +17,34 @@ exports.scan = async (req, res, next) => {
     const { eventId, beneficiaryDid } = req.body;
 
     // Check if event exists and get assigned volunteers
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: { volunteers: true }
-    });
+    const event = await Event.findById(eventId).populate('volunteers');
     if (!event) return res.status(404).json({ message: "Event not found" });
 
     // Check if volunteer is assigned to this event
-    const isAssigned = event.volunteers.some(v => v.id === req.user.id);
+    const isAssigned = event.volunteers.some(v => v._id.toString() === req.user._id.toString());
     if (!isAssigned) {
       return res.status(403).json({ message: "You are not assigned to this event." });
     }
 
     // Find beneficiary by anchored DID
-    const beneficiary = await prisma.user.findUnique({
-      where: { did: beneficiaryDid },
-    });
+    const beneficiary = await User.findOne({ did: beneficiaryDid });
     if (!beneficiary)
       return res.status(404).json({ message: "Beneficiary not found" });
 
     // Check if already collected for this event
-    const alreadyCollected = await prisma.aidLog.findFirst({
-      where: {
-        eventId,
-        beneficiaryId: beneficiary.id,
-        status: "collected",
-      },
+    const alreadyCollected = await AidLog.findOne({
+      event: event._id,
+      did: beneficiary.did,
+      status: "collected",
     });
     if (alreadyCollected) {
       // Log the duplicate attempt
-      await prisma.aidLog.create({
-        data: {
-          eventId,
-          beneficiaryId: beneficiary.id,
-          volunteerId: req.user.id,
-          status: "duplicate-blocked",
-          timestamp: new Date(),
-        },
+      await AidLog.create({
+        event: event._id,
+        did: beneficiary.did,
+        volunteer: req.user._id,
+        status: "duplicate-blocked",
+        timestamp: new Date(),
       });
       return res.json({ status: "duplicate-blocked" });
     }
@@ -85,16 +77,13 @@ exports.scan = async (req, res, next) => {
     }
 
     // Only create AidLog in DB if Hedera succeeded, using the same UUID
-    let aidLog = await prisma.aidLog.create({
-      data: {
-        id: aidLogId,
-        eventId,
-        beneficiaryId: beneficiary.id,
-        volunteerId: req.user.id,
-        status: "collected",
-        timestamp: new Date(),
-        hederaTx
-      },
+    let aidLog = await AidLog.create({
+      event: event._id,
+      did: beneficiary.did,
+      volunteer: req.user._id,
+      status: "collected",
+      timestamp: new Date(),
+      hederaTx
     });
 
     res.json({

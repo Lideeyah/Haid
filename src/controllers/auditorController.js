@@ -1,7 +1,7 @@
 // src/controllers/auditorController.js
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const Event = require('../models/Event');
+const AidLog = require('../models/AidLog');
 
 // Auditor dashboard: filter logs by event/date, verify with Hedera mirror node
 const axios = require('axios');
@@ -22,14 +22,14 @@ exports.getDashboard = async (req, res, next) => {
     }
     const { eventId, date } = req.query;
     // Build filter
-    const where = {};
+    const filter = {};
     if (eventId) {
       // Check if event exists
-      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      const event = await Event.findById(eventId);
       if (!event) {
         return res.status(404).json({ message: "Event not found." });
       }
-      where.eventId = eventId;
+      filter.event = eventId;
     }
     if (date) {
       // Validate date format
@@ -39,21 +39,10 @@ exports.getDashboard = async (req, res, next) => {
       }
       const end = new Date(start);
       end.setUTCHours(23, 59, 59, 999);
-      where.timestamp = { gte: start, lte: end };
+      filter.timestamp = { $gte: start, $lte: end };
     }
     // Get logs
-    const logs = await prisma.aidLog.findMany({
-      where,
-      select: {
-        id: true,
-        eventId: true,
-        beneficiaryId: true,
-        volunteerId: true,
-        timestamp: true,
-        status: true,
-        hederaTx: true
-      }
-    });
+    const logs = await AidLog.find(filter);
 
     // Fetch Hedera messages from mirror node
     let topicMessages = [];
@@ -67,26 +56,30 @@ exports.getDashboard = async (req, res, next) => {
       topicMessages = [];
     }
 
-    // Compare each log individually
+    // Compare each log individually and sanitize output
     const logsWithMatch = logs.map(log => {
-      if (!log.hederaTx) {
-        // Not submitted to Hedera (e.g., duplicate-blocked)
-        return { ...log, hederaMatch: null };
+      const obj = log.toObject();
+      let hederaMatch = null;
+      if (obj.hederaTx) {
+        hederaMatch = topicMessages.some(msg => {
+          try {
+            const payload = JSON.parse(Buffer.from(msg.message, 'base64').toString('utf8'));
+            // Compare only scanId/eventId for matching
+            return (payload.scanId && payload.scanId === String(obj._id)) || (payload.eventId && payload.eventId === String(obj.event));
+          } catch (e) {
+            return false;
+          }
+        });
       }
-      // Look for a matching message on Hedera
-      const found = topicMessages.some(msg => {
-        try {
-          const payload = JSON.parse(Buffer.from(msg.message, 'base64').toString('utf8'));
-          // Debug: print payload for inspection
-          console.log('Decoded Hedera payload:', payload);
-          // Compare only scanId/eventId for matching
-          return (payload.scanId && payload.scanId === log.id) || (payload.eventId && payload.eventId === log.eventId);
-        } catch (e) {
-          console.log('Error decoding Hedera payload:', e);
-          return false;
-        }
-      });
-      return { ...log, hederaMatch: found };
+      return {
+        _id: obj._id,
+        did: obj.did,
+        hederaTx: obj.hederaTx,
+        status: obj.status,
+        timestamp: obj.timestamp,
+        event: obj.event,
+        hederaMatch
+      };
     });
 
     // Optionally, add a global allHederaMatch flag
