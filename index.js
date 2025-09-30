@@ -87,7 +87,13 @@ app.use(
         },
     })
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://haid-web.vercel.app" || "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
 app.use(express.json({ limit: '2mb' }));
 app.use(cookieParser());
