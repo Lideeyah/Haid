@@ -9,7 +9,7 @@
 DROP INDEX "public"."User_simulatedDid_key";
 
 -- AlterTable
-ALTER TABLE "public"."User" DROP COLUMN "simulatedDid",
+ALTER TABLE "public"."User" DROP COLUMN "",
 ADD COLUMN     "did" TEXT;
 
 -- CreateIndex
