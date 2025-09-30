@@ -20,22 +20,18 @@ function errorHandler(err, req, res, next) {
     stack: err.stack,
     method: req.method,
     url: req.originalUrl,
-    user: req.user ? req.user.id : undefined
+    user: req.user ? req.user.id : undefined,
   });
+  // Always print error to console for Render logs
+  console.error("ERROR:", err.stack || err);
+
   const status = err.statusCode || 500;
-  // Show full error details in production for debugging
-  if (process.env.NODE_ENV === 'development') {
-    res.status(status).json({
-      message: err.message,
-      stack: err.stack,
-      method: req.method,
-      url: req.originalUrl
-    });
-  } else {
-    res.status(status).json({
-      message: status === 500 ? 'Internal server error' : err.message
-    });
-  }
+  res.status(status).json({
+    message: err.message,
+    stack: err.stack,
+    method: req.method,
+    url: req.originalUrl,
+  });
 }
 
 module.exports = errorHandler;
