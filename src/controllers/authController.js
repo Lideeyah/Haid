@@ -83,14 +83,8 @@ exports.login = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    // Set token in HttpOnly cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
-    });
-    res.json({ message: 'Login successful', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    // Return token in response body for frontend to store in localStorage
+    res.json({ message: 'Login successful', token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     next(err);
   }
@@ -98,11 +92,7 @@ exports.login = async (req, res, next) => {
 
 // Logout controller
 exports.logout = (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none'
-  });
+  // No cookie to clear, just respond
   res.json({ message: 'Logged out successfully' });
 };
 
