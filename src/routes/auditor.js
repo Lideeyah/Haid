@@ -13,6 +13,12 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  *   description: Auditor dashboard and verification (auditor only)
  */
 
+// Validation rules for auditor dashboard
+const dashboardValidation = [
+  query('eventId').optional().isUUID().withMessage('Valid eventId required'),
+  query('date').optional().isISO8601().withMessage('Valid date required')
+];
+
 /**
  * @swagger
  * /api/auditor/dashboard:
@@ -49,22 +55,26 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  *                   items:
  *                     type: object
  *                     properties:
- *                       eventId:
+ *                       did:
  *                         type: string
- *                         format: uuid
- *                       beneficiaryId:
+ *                         description: Anchored DID
+ *                       hederaTx:
+ *                         type: object
+ *                         description: Blockchain transaction info
+ *                         properties:
+ *                           status:
+ *                             type: string
+ *                           transactionId:
+ *                             type: string
+ *                           sequenceNumber:
+ *                             type: integer
+ *                           runningHash:
+ *                             type: string
+ *                       status:
  *                         type: string
- *                         format: uuid
- *                       volunteerId:
- *                         type: string
- *                         format: uuid
  *                       timestamp:
  *                         type: string
  *                         format: date-time
- *                       transactionId:
- *                         type: string
- *                       status:
- *                         type: string
  *                 guardianMatch:
  *                   type: boolean
  *                   description: True if logs match Hedera Guardian indexer
@@ -77,13 +87,6 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  *       404:
  *         description: Event not found
  */
-
-// Validation rules for auditor dashboard
-const dashboardValidation = [
-  query('eventId').optional().isUUID().withMessage('Valid eventId required'),
-  query('date').optional().isISO8601().withMessage('Valid date required')
-];
-
 // Get auditor dashboard logs and verification (auditor only)
 router.get('/dashboard',
   authMiddleware,

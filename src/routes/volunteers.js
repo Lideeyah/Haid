@@ -27,6 +27,9 @@
  *                 type: string
  *               location:
  *                 type: string
+ *         did:
+ *           type: string
+ *           description: Anchored DID
  */
 
 // src/routes/volunteers.js

@@ -49,6 +49,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
  *                         type: string
  *                       events:
  *                         type: integer
+ *               description: All metrics are based on blockchain-anchored records for tamperproof auditability.
  *       401:
  *         description: Unauthorized
  *       403:

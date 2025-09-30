@@ -19,7 +19,7 @@ model User {
   email        String    @unique
   password     String?
   role         Role
-  simulatedDid String?   @unique
+  did          String?   @unique // <-- new field for anchored DID
   qrCodeUrl    String?
   createdAt    DateTime  @default(now())
   events       Event[]   @relation("CreatedEvents")
@@ -48,6 +48,7 @@ model Event {
   startTime   DateTime
   endTime     DateTime
   createdAt   DateTime  @default(now())
+  hederaTx    Json?
   creator     User      @relation("CreatedEvents", fields: [createdBy], references: [id])
   aidLogs     AidLog[]
   volunteers  User[]    @relation("EventVolunteers")
@@ -59,8 +60,8 @@ model AidLog {
   beneficiaryId  String
   volunteerId    String
   timestamp      DateTime @default(now())
-  transactionId  String   @unique
   status         String
+  hederaTx       Json?
   event          Event    @relation(fields: [eventId], references: [id])
   beneficiary    User     @relation("BeneficiaryLogs", fields: [beneficiaryId], references: [id])
   volunteer      User     @relation("VolunteerLogs", fields: [volunteerId], references: [id])

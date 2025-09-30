@@ -3,7 +3,16 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Auditor dashboard: filter logs by event/date, compare with Hedera Guardian indexer
+// Auditor dashboard: filter logs by event/date, verify with Hedera mirror node
+const axios = require('axios');
+
+async function getTopicMessages(topicId, limit = 100) {
+  const url = `https://testnet.mirrornode.hedera.com/api/v1/topics/${topicId}/messages?limit=${limit}`;
+  const response = await axios.get(url);
+  if (response.status !== 200) throw new Error(`Mirror node error: ${response.status}`);
+  return response.data.messages;
+}
+
 exports.getDashboard = async (req, res, next) => {
   try {
     const { validationResult } = require('express-validator');
@@ -42,15 +51,50 @@ exports.getDashboard = async (req, res, next) => {
         volunteerId: true,
         timestamp: true,
         status: true,
-        transactionId: true
+        hederaTx: true
       }
     });
-    // Placeholder for Hedera Guardian indexer comparison
-    // In production, fetch and compare with external indexer data
-    const hederaMatch = true; // Assume match for now
+
+    // Fetch Hedera messages from mirror node
+    let topicMessages = [];
+    try {
+      const topicId = process.env.HEDERA_TOPIC_ID;
+      if (!topicId) throw new Error('HEDERA_TOPIC_ID not set');
+      topicMessages = await getTopicMessages(topicId, 100);
+    } catch (mirrorErr) {
+      // If mirror node fails, do not block, but set topicMessages to empty
+      console.error('Mirror node verification error:', mirrorErr);
+      topicMessages = [];
+    }
+
+    // Compare each log individually
+    const logsWithMatch = logs.map(log => {
+      if (!log.hederaTx) {
+        // Not submitted to Hedera (e.g., duplicate-blocked)
+        return { ...log, hederaMatch: null };
+      }
+      // Look for a matching message on Hedera
+      const found = topicMessages.some(msg => {
+        try {
+          const payload = JSON.parse(Buffer.from(msg.message, 'base64').toString('utf8'));
+          // Debug: print payload for inspection
+          console.log('Decoded Hedera payload:', payload);
+          // Compare only scanId/eventId for matching
+          return (payload.scanId && payload.scanId === log.id) || (payload.eventId && payload.eventId === log.eventId);
+        } catch (e) {
+          console.log('Error decoding Hedera payload:', e);
+          return false;
+        }
+      });
+      return { ...log, hederaMatch: found };
+    });
+
+    // Optionally, add a global allHederaMatch flag
+    const allHederaMatch = logsWithMatch.every(l => l.hederaMatch === true || l.hederaMatch === null);
+
     res.json({
-      logs,
-      hederaMatch
+      logs: logsWithMatch,
+      allHederaMatch
     });
   } catch (err) {
     next(err);

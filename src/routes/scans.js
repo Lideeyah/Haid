@@ -55,8 +55,18 @@ const scanValidation = [
  *                     status:
  *                       type: string
  *                       enum: [collected]
- *                     transactionId:
- *                       type: string
+ *                     hederaTx:
+ *                       type: object
+ *                       description: Blockchain transaction info
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                         transactionId:
+ *                           type: string
+ *                         sequenceNumber:
+ *                           type: integer
+ *                         runningHash:
+ *                           type: string
  *                     timestamp:
  *                       type: string
  *                       format: date-time

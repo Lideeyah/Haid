@@ -2,8 +2,10 @@
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { generateTransactionId } = require('../utils/generateDid');
 const { validationResult } = require('express-validator');
+
+const { submitMessage } = require("../utils/hedera");
+const { v4: uuidv4 } = require('uuid');
 
 exports.scan = async (req, res, next) => {
   const errors = validationResult(req);
@@ -12,7 +14,6 @@ exports.scan = async (req, res, next) => {
   }
   try {
     const { eventId, beneficiaryDid } = req.body;
-
 
     // Check if event exists and get assigned volunteers
     const event = await prisma.event.findUnique({
@@ -27,9 +28,9 @@ exports.scan = async (req, res, next) => {
       return res.status(403).json({ message: "You are not assigned to this event." });
     }
 
-    // Find beneficiary by simulatedDid
+    // Find beneficiary by anchored DID
     const beneficiary = await prisma.user.findUnique({
-      where: { simulatedDid: beneficiaryDid },
+      where: { did: beneficiaryDid },
     });
     if (!beneficiary)
       return res.status(404).json({ message: "Beneficiary not found" });
@@ -49,7 +50,6 @@ exports.scan = async (req, res, next) => {
           eventId,
           beneficiaryId: beneficiary.id,
           volunteerId: req.user.id,
-          transactionId: generateTransactionId(),
           status: "duplicate-blocked",
           timestamp: new Date(),
         },
@@ -57,21 +57,50 @@ exports.scan = async (req, res, next) => {
       return res.json({ status: "duplicate-blocked" });
     }
 
-    // Create new AidLog
-    const aidLog = await prisma.aidLog.create({
+    // Generate UUID for aidLog before Hedera submission
+    const aidLogId = uuidv4();
+
+    // Submit distribution to Hedera Consensus Service with scanId
+    let hederaTx = null;
+    if (!process.env.HEDERA_TOPIC_ID) {
+      return res.status(500).json({ message: "Hedera topic not configured." });
+    }
+    try {
+      const rawTx = await submitMessage(process.env.HEDERA_TOPIC_ID, {
+        type: "distribution",
+        scanId: aidLogId,
+        eventId,
+        beneficiaryDid: beneficiary.did,
+        status: "collected",
+        timestamp: Date.now(),
+      });
+      hederaTx = {
+        status: rawTx.status,
+        transactionId: rawTx.transactionId,
+        sequenceNumber: Number(rawTx.sequenceNumber),
+        runningHash: rawTx.runningHash,
+      };
+    } catch (hcsErr) {
+      return res.status(500).json({ message: "Failed to anchor distribution on blockchain." });
+    }
+
+    // Only create AidLog in DB if Hedera succeeded, using the same UUID
+    let aidLog = await prisma.aidLog.create({
       data: {
+        id: aidLogId,
         eventId,
         beneficiaryId: beneficiary.id,
         volunteerId: req.user.id,
-        transactionId: generateTransactionId(),
         status: "collected",
         timestamp: new Date(),
+        hederaTx
       },
     });
+
     res.json({
-      status: "collected",
-      transactionId: aidLog.transactionId,
+      status: aidLog.status,
       timestamp: aidLog.timestamp,
+      hederaTx: aidLog.hederaTx,
     });
   } catch (err) {
     next(err);

@@ -1,4 +1,3 @@
-
 <div align="center">
   <img src="https://res.cloudinary.com/df2q6gyuq/image/upload/v1759163480/haid-logo_uwsyvc.jpg" alt="Haid Logo" width="120" />
   
@@ -15,7 +14,7 @@
 </div>
 
 ## Overview
-Haid is a secure, scalable backend for humanitarian aid distribution, built with Node.js, Express, and Prisma/PostgreSQL. It supports multiple user roles, robust event and scan tracking, and advanced dashboards for donors, NGOs, volunteers, and auditors. The API is fully documented with Swagger and designed for easy frontend integration.
+Haid is a secure, scalable backend for humanitarian aid distribution, built with Node.js, Express, and Prisma/PostgreSQL. **All key actions are anchored on the Hedera Consensus Service blockchain for tamperproof auditability.** The backend supports multiple user roles, robust event and scan tracking, and advanced dashboards for donors, NGOs, volunteers, and auditors. The API is fully documented with Swagger and designed for easy frontend integration. **All records (registration, events, scans, audits) are verifiable on-chain.**
 
 ---
 
@@ -61,14 +60,15 @@ The backend is live and ready to test:
 ---
 
 ## ✨ Features
-- Multi-role authentication: Beneficiary, Donor, Volunteer, NGO, Auditor
-- Event creation, volunteer assignment, and aid distribution tracking
-- QR code generation for beneficiaries (DID, to be blockchain-integrated)
-- Real-time scan logging, duplicate prevention, and audit trails
-- Donor and auditor dashboards with KPIs, impact, and verification
-- Robust validation and error handling
-- Secure JWT authentication (HttpOnly cookies)
-- Fully documented Swagger API
+* Multi-role authentication: Beneficiary, Donor, Volunteer, NGO, Auditor
+* Event creation, volunteer assignment, and aid distribution tracking
+* QR code generation for beneficiaries (**anchored DID, blockchain-backed**)
+* **All key actions (registration, event, scan, audit) are anchored on Hedera Consensus Service for tamperproof records**
+* Real-time scan logging, duplicate prevention, and audit trails
+* Donor, NGO, and auditor dashboards with KPIs, impact, and **blockchain verification**
+* Robust validation and error handling (including blockchain anchoring errors)
+* Secure JWT authentication (HttpOnly cookies)
+* Fully documented Swagger API (**all blockchain fields included**)
 
 ---
 
@@ -80,13 +80,19 @@ The backend is live and ready to test:
 - **bcrypt**: Password hashing
 - **Swagger**: API documentation
 - **express-validator**: Request validation
-- **helmet, morgan, winston**: Security & logging
-- **Custom Content Security Policy (CSP)**: Allows images from Cloudinary for branding and UI (see `/health` endpoint and logo usage)
+ **helmet, morgan, winston**: Security & logging
+ **Custom Content Security Policy (CSP)**: Allows images from Cloudinary for branding and UI (see `/health` endpoint and logo usage)
+ **@hashgraph/sdk**: Hedera Consensus Service integration
+ **Axios**: Hedera Mirror Node API requests
 
----
 
-## 🏗️ Architecture
-- Modular controllers for each domain (auth, events, scans, dashboard, etc.)
+
+ * Modular controllers for each domain (auth, events, scans, dashboard, etc.)
+ * Middleware for authentication, role checks, and error handling
+ * Prisma schema for users, events, aid logs, and roles
+ * Separation of validation logic in routes
+ * DID generation utility (crypto keypair + hash for lightweight, anchored DIDs)
+ * Hedera integration utility (all key actions logged and verified on-chain)
 - Middleware for authentication, role checks, and error handling
 - Prisma schema for users, events, aid logs, and roles
 - Separation of validation logic in routes
@@ -116,6 +122,9 @@ Then visit [`http://localhost:5000/api-docs`](http://localhost:5000/api-docs) fo
 | JWT_SECRET       | JWT signing secret                |
 | DATABASE_URL     | PostgreSQL connection string      |
 | NODE_ENV         | Environment (development/production) |
+| OPERATOR_ID      | Hedera account ID for blockchain anchoring |
+| OPERATOR_KEY     | Hedera private key for signing transactions |
+| HEDERA_TOPIC_ID  | Hedera topic/channel for logging events on-chain |
 
 ---
 
@@ -142,7 +151,7 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 
 | Role         | Description                                      | Key Endpoints                |
 |--------------|--------------------------------------------------|------------------------------|
-| Beneficiary  | Receives aid, has a QR code (simulated DID)      | Registration                 |
+| Beneficiary  | Receives aid, has a QR code (**anchored DID, blockchain-backed**) | Registration                 |
 | Donor        | Views impact dashboard                           | `/api/donor/dashboard`       |
 | Volunteer    | Assigned to events, scans beneficiaries          | `/api/scans`                 |
 | NGO          | Creates events, manages volunteers                | `/api/events`, `/api/volunteers` |
@@ -157,29 +166,28 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 <summary><b>Endpoint Summary Table</b></summary>
 
 | Method | Endpoint                       | Role(s)         | Description                       |
-|--------|-------------------------------|-----------------|------------------------------------|
-| POST   | `/api/auth/register`          | All             | Register user                      |
-| POST   | `/api/auth/login`             | All             | Login, get JWT cookie              |
-| POST   | `/api/auth/logout`            | All             | Logout                             |
-| POST   | `/api/events`                 | NGO             | Create event                       |
-| GET    | `/api/events`                 | Authenticated   | List events                        |
-| GET    | `/api/events/:id`             | Authenticated   | Get event details                  |
-| POST   | `/api/events/assign-volunteer`| NGO             | Assign volunteer                   |
-| POST   | `/api/scans`                  | Volunteer       | Scan beneficiary QR                |
-| GET    | `/api/volunteers`             | Admin, NGO      | List volunteers                    |
-| GET    | `/api/volunteers/:id`         | Admin, NGO      | Get volunteer details              |
-| GET    | `/api/dashboard/general-stats`| Admin, NGO      | General dashboard stats            |
-| GET    | `/api/donor/dashboard`        | Donor           | Donor dashboard KPIs               |
-| GET    | `/api/auditor/dashboard`      | Auditor         | Auditor dashboard logs/verification|
+| Method | Endpoint                       | Role(s)         | Description                       | Blockchain Anchored |
+|--------|-------------------------------|-----------------|------------------------------------|---------------------|
+| POST   | `/api/auth/register`          | All             | Register user                      | Yes (returns did, hederaTx) |
+| POST   | `/api/auth/login`             | All             | Login, get JWT cookie              | - |
+| POST   | `/api/auth/logout`            | All             | Logout                             | - |
+| POST   | `/api/events`                 | NGO             | Create event                       | Yes (returns hederaTx) |
+| GET    | `/api/events`                 | Authenticated   | List events                        | Yes (returns hederaTx) |
+| GET    | `/api/events/:id`             | Authenticated   | Get event details                  | Yes (returns hederaTx) |
+| POST   | `/api/events/assign-volunteer`| NGO             | Assign volunteer                   | - |
+| POST   | `/api/scans`                  | Volunteer       | Scan beneficiary QR                | Yes (returns hederaTx) |
+| GET    | `/api/volunteers`             | Admin, NGO      | List volunteers                    | Yes (returns did) |
+| GET    | `/api/volunteers/:id`         | Admin, NGO      | Get volunteer details              | Yes (returns did) |
+| GET    | `/api/dashboard/general-stats`| Admin, NGO      | General dashboard stats            | Yes |
+| GET    | `/api/donor/dashboard`        | Donor           | Donor dashboard KPIs               | Yes |
+| GET    | `/api/auditor/dashboard`      | Auditor         | Auditor dashboard logs/verification| Yes (returns did, hederaTx) |
 </details>
 
 ---
 
 ## 🔗 Sample Test Flow
 
-Register NGO → Create Event → Register Volunteer → Assign Volunteer → Register Beneficiary → Volunteer Scans Beneficiary → View Dashboard
-
----
+Register NGO (**anchored DID, blockchain**) → Create Event (**anchored on Hedera**) → Register Volunteer (**anchored DID**) → Assign Volunteer → Register Beneficiary (**anchored DID, blockchain**) → Volunteer Scans Beneficiary (**anchored on Hedera**) → View Dashboard (**blockchain-backed stats**)
 
 #### `POST /api/auth/register`
 **Register a new user (beneficiary, donor, volunteer, NGO, auditor)**
@@ -203,7 +211,14 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
     "name": "John Doe",
     "email": "john@example.com",
     "role": "donor",
+    "did": "did:haid:...", // Anchored DID
     "createdAt": "2025-09-29T12:00:00Z"
+  },
+  "hederaTx": {
+    "status": "SUCCESS",
+    "transactionId": "...",
+    "sequenceNumber": 123,
+    "runningHash": "..."
   }
 }
 ```
@@ -211,8 +226,14 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 `201 Created`
 ```json
 {
-  "beneficiaryDid": "did:haid:...",
-  "qrCodeUrl": "https://..."
+  "did": "did:haid:...", // Anchored DID
+  "qrCodeUrl": "https://...",
+  "hederaTx": {
+    "status": "SUCCESS",
+    "transactionId": "...",
+    "sequenceNumber": 123,
+    "runningHash": "..."
+  }
 }
 ```
 **Error Responses:**
@@ -286,7 +307,7 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ### Events
 
 #### `POST /api/events`
-**Create a new aid event (NGO only)**
+**Create a new aid event (NGO only, blockchain-anchored)**
 
 **Request Body:**
 ```json
@@ -318,7 +339,13 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
   "duplicates": 0,
   "startTime": "2025-10-01T09:00:00Z",
   "endTime": "2025-10-01T17:00:00Z",
-  "createdAt": "2025-09-29T12:00:00Z"
+  "createdAt": "2025-09-29T12:00:00Z",
+  "hederaTx": {
+    "status": "SUCCESS",
+    "transactionId": "...",
+    "sequenceNumber": 456,
+    "runningHash": "..."
+  }
 }
 ```
 **Error Responses:**
@@ -408,7 +435,7 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ### Scans
 
 #### `POST /api/scans`
-**Scan beneficiary QR code and log aid distribution (volunteer only)**
+**Scan beneficiary QR code and log aid distribution (volunteer only, blockchain-anchored)**
 
 **Request Body:**
 ```json
@@ -422,7 +449,12 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ```json
 {
   "status": "collected",
-  "transactionId": "...",
+  "hederaTx": {
+    "status": "SUCCESS",
+    "transactionId": "...",
+    "sequenceNumber": 789,
+    "runningHash": "..."
+  },
   "timestamp": "2025-09-29T12:34:56Z"
 }
 ```
@@ -463,7 +495,7 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ### Volunteers
 
 #### `GET /api/volunteers`
-**List all volunteers (admin, NGO only)**
+**List all volunteers (admin, NGO only, blockchain-anchored)**
 
 **Success Response:**
 `200 OK`
@@ -473,6 +505,7 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
     "id": "...",
     "name": "Jane Doe",
     "email": "jane@example.com",
+    "did": "did:haid:...", // Anchored DID
     "createdAt": "2025-09-29T12:00:00Z",
     "assignedEvents": [ { "id": "...", "name": "Food Drive", "location": "Lagos" } ]
   }
@@ -508,7 +541,7 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ### Dashboard
 
 #### `GET /api/dashboard/general-stats`
-**Get general dashboard stats (admin, NGO only)**
+**Get general dashboard stats (admin, NGO only, blockchain-anchored)**
 
 **Success Response:**
 `200 OK`
@@ -522,10 +555,8 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 }
 ```
 
----
-
 #### `GET /api/donor/dashboard`
-**Get donor dashboard KPIs and impact (donor only)**
+**Get donor dashboard KPIs and impact (donor only, blockchain-anchored)**
 
 **Success Response:**
 `200 OK`
@@ -544,10 +575,8 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 }
 ```
 
----
-
 #### `GET /api/auditor/dashboard`
-**Get auditor dashboard logs and verification (auditor only)**
+**Get auditor dashboard logs and verification (auditor only, blockchain-anchored)**
 
 **Query Params:**
 - `eventId` (optional): Filter logs by event ID
@@ -559,15 +588,18 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 {
   "logs": [
     {
-      "eventId": "...",
-      "beneficiaryId": "...",
-      "volunteerId": "...",
-      "timestamp": "2025-09-29T12:34:56Z",
+      "did": "did:haid:...", // Anchored DID
+      "hederaTx": {
+        "status": "SUCCESS",
+        "transactionId": "...",
+        "sequenceNumber": 101,
+        "runningHash": "..."
+      },
       "status": "collected",
-      "transactionId": "..."
+      "timestamp": "2025-09-29T12:34:56Z"
     }
   ],
-  "hederaMatch": true
+  "guardianMatch": true
 }
 ```
 **Error Responses:**
@@ -674,9 +706,9 @@ Register NGO → Create Event → Register Volunteer → Assign Volunteer → Re
 ---
 
 ## ⛓️ Blockchain Roadmap
-- **Current:** Beneficiary DID is simulated and QR code generated
-- **Future:** DID will be issued and verified via blockchain (Hedera Guardian)
-- Auditor dashboard will compare aid logs with blockchain indexer
+**Current:** All key actions (registration, event, scan, audit) are anchored on Hedera Consensus Service. DIDs are generated and anchored on-chain, and all endpoints return blockchain transaction info (`hederaTx`).
+**Live:** Auditor dashboard performs real-time verification against Hedera Mirror Node, flags any missing on-chain records.
+**Future:** Further expand blockchain logic, add external indexer/mirror node matching, and enhance audit flows.
 
 ---
 
@@ -726,6 +758,6 @@ MIT
 ---
 
 ## 🏁 Quick Reference
-- All endpoints, request/response schemas, and error formats are documented in Swagger (`/api-docs`)
-- For any questions, reach out via GitHub Issues
+All endpoints, request/response schemas, blockchain fields (`did`, `hederaTx`), and audit logic are documented in Swagger (`/api-docs`).
+For any questions, reach out via GitHub Issues
 

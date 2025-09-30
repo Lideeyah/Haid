@@ -42,6 +42,18 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *         hederaTx:
+ *           type: object
+ *           description: Blockchain transaction info
+ *           properties:
+ *             status:
+ *               type: string
+ *             transactionId:
+ *               type: string
+ *             sequenceNumber:
+ *               type: integer
+ *             runningHash:
+ *               type: string
  *     Volunteer:
  *       type: object
  *       properties:
@@ -164,7 +176,12 @@ const assignVolunteerValidation = [
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Event'
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Event'
+ *                 - type: object
+ *                   properties:
+ *                     hederaTx:
+ *                       $ref: '#/components/schemas/Event/properties/hederaTx'
  *       400:
  *         description: Validation error
  *       401:
@@ -197,7 +214,12 @@ router.post(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Event'
+ *                 allOf:
+ *                   - $ref: '#/components/schemas/Event'
+ *                   - type: object
+ *                     properties:
+ *                       hederaTx:
+ *                         $ref: '#/components/schemas/Event/properties/hederaTx'
  *       401:
  *         description: Unauthorized
  */
@@ -226,7 +248,12 @@ router.get("/", authMiddleware, eventController.getEvents);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Event'
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Event'
+ *                 - type: object
+ *                   properties:
+ *                     hederaTx:
+ *                       $ref: '#/components/schemas/Event/properties/hederaTx'
  *       400:
  *         description: Validation error
  *       401:

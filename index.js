@@ -1,6 +1,7 @@
 // index.js
 
 require('dotenv').config();
+const { createTopic } = require('./src/utils/hedera');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -53,15 +54,28 @@ const logger = winston.createLogger({
 	]
 });
 
+
 // Startup check for Prisma connection
 prisma.$connect()
-	.then(() => {
-		logger.info('Prisma connected to PostgreSQL');
-	})
-	.catch((err) => {
-		logger.error('Prisma failed to connect:', err);
-		process.exit(1);
-	});
+    .then(async () => {
+        logger.info('Prisma connected to PostgreSQL');
+        // Hedera topic setup
+        if (!process.env.HEDERA_TOPIC_ID) {
+            try {
+                const topicId = await createTopic();
+                logger.info('Created new Hedera topic: ' + topicId);
+                // You should manually add this topicId to your .env file for persistence
+            } catch (err) {
+                logger.error('Failed to create Hedera topic:', err);
+            }
+        } else {
+            logger.info('Using existing Hedera topic: ' + process.env.HEDERA_TOPIC_ID);
+        }
+    })
+    .catch((err) => {
+        logger.error('Prisma failed to connect:', err);
+        process.exit(1);
+    });
 
 const app = express();
 

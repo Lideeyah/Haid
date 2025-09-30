@@ -20,6 +20,37 @@
  *         password:
  *           type: string
  *           description: Required for donor, volunteer, ngo, auditor
+ *     UserResponse:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         role:
+ *           type: string
+ *         did:
+ *           type: string
+ *           description: Anchored DID
+ *         qrCodeUrl:
+ *           type: string
+ *           format: uri
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         hederaTx:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *             transactionId:
+ *               type: string
+ *             sequenceNumber:
+ *               type: integer
+ *             runningHash:
+ *               type: string
  *     UserLogin:
  *       type: object
  *       required:
@@ -101,36 +132,22 @@ const loginValidation = [
  *               oneOf:
  *                 - type: object
  *                   properties:
- *                     beneficiaryDid:
+ *                     did:
  *                       type: string
+ *                       description: Anchored DID
  *                     qrCodeUrl:
  *                       type: string
+ *                       format: uri
+ *                     hederaTx:
+ *                       $ref: '#/components/schemas/UserResponse/properties/hederaTx'
  *                 - type: object
  *                   properties:
  *                     message:
  *                       type: string
  *                     user:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: string
- *                         name:
- *                           type: string
- *                         email:
- *                           type: string
- *                         password:
- *                           type: string
- *                         role:
- *                           type: string
- *                         simulatedDid:
- *                           type: string
- *                           format: uuid
- *                         qrCodeUrl:
- *                           type: string
- *                           format: uri
- *                         createdAt:
- *                           type: string
- *                           format: date-time
+ *                       $ref: '#/components/schemas/UserResponse'
+ *                     hederaTx:
+ *                       $ref: '#/components/schemas/UserResponse/properties/hederaTx'
  *       400:
  *         description: Validation error or user already exists
  */
@@ -168,16 +185,7 @@ router.post("/register", registerValidation, authController.register);
  *                 message:
  *                   type: string
  *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
+ *                   $ref: '#/components/schemas/UserResponse'
  *       400:
  *         description: Invalid credentials or validation error
  *         content:

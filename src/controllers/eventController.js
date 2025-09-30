@@ -4,6 +4,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { validationResult } = require('express-validator');
 
+const { submitMessage } = require("../utils/hedera");
+
 exports.createEvent = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -11,8 +13,38 @@ exports.createEvent = async (req, res, next) => {
   }
   try {
     const { name, type, location, description, quantity, supplies, startTime, endTime } = req.body;
+    // Generate UUID for event before Hedera submission
+    const { v4: uuidv4 } = require('uuid');
+    const eventId = uuidv4();
+
+    // Submit event creation to Hedera Consensus Service with eventId
+    let hederaTx = null;
+    if (!process.env.HEDERA_TOPIC_ID) {
+      return res.status(500).json({ message: "Hedera topic not configured." });
+    }
+    try {
+      const rawTx = await submitMessage(process.env.HEDERA_TOPIC_ID, {
+        type: "event_created",
+        eventId,
+        ngoId: req.user.id,
+        timestamp: Date.now(),
+      });
+      hederaTx = {
+        status: rawTx.status,
+        transactionId: rawTx.transactionId,
+        sequenceNumber: Number(rawTx.sequenceNumber),
+        runningHash: rawTx.runningHash,
+      };
+    } catch (hcsErr) {
+      // Blockchain anchoring failed, do not create event
+      console.error("Hedera HCS error:", hcsErr);
+      return res.status(500).json({ message: "Failed to anchor event on blockchain." });
+    }
+
+    // Only create event in DB if Hedera succeeded, using the same UUID
     const event = await prisma.event.create({
       data: {
+        id: eventId,
         name,
         type,
         location,
@@ -21,10 +53,11 @@ exports.createEvent = async (req, res, next) => {
         supplies: supplies || [],
         createdBy: req.user.id,
         startTime: new Date(startTime),
-        endTime: new Date(endTime)
+        endTime: new Date(endTime),
+        hederaTx
       }
     });
-    res.status(201).json(event);
+    res.status(201).json({ ...event });
   } catch (err) {
     next(err);
   }

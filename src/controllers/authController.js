@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { generateSimulatedDid } = require('../utils/generateDid');
+const { generateAnchoredDID } = require('../utils/did');
 const generateQrCode = require('../utils/generateQrCode');
 const { validationResult } = require('express-validator');
 
@@ -19,28 +19,53 @@ exports.register = async (req, res, next) => {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
-    let simulatedDid, qrCodeUrl;
-    if (role === 'beneficiary') {
-      simulatedDid = generateSimulatedDid();
-      qrCodeUrl = await generateQrCode(simulatedDid);
+    let did, qrCodeUrl, hederaTx;
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
+    // Generate UUID for user before Hedera submission
+    const { v4: uuidv4 } = require('uuid');
+    const userId = uuidv4();
+
+    // Generate anchored DID first, with userId
+    let didResult;
+    try {
+      didResult = await generateAnchoredDID(userId, role);
+      did = didResult.did;
+      if (didResult.hederaTx) {
+        hederaTx = {
+          status: didResult.hederaTx.status,
+          transactionId: didResult.hederaTx.transactionId,
+          sequenceNumber: Number(didResult.hederaTx.sequenceNumber),
+          runningHash: didResult.hederaTx.runningHash,
+        };
+      } else {
+        hederaTx = null;
+      }
+    } catch (hcsErr) {
+      return res.status(500).json({ message: "Failed to anchor DID on blockchain." });
     }
 
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+    // Only create user in DB if Hedera succeeded, using the same UUID
     const user = await prisma.user.create({
       data: {
+        id: userId,
         name,
         email,
         role,
-        simulatedDid,
-        qrCodeUrl,
-        password: hashedPassword
+        password: hashedPassword,
+        did
       }
     });
 
     if (role === 'beneficiary') {
-      return res.status(201).json({ beneficiaryDid: simulatedDid, qrCodeUrl });
+      qrCodeUrl = await generateQrCode(did);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { qrCodeUrl }
+      });
+      return res.status(201).json({ beneficiaryDid: did, qrCodeUrl, hederaTx });
     }
-    res.status(201).json({ message: 'User registered', user: user });
+    res.status(201).json({ message: 'User registered', user: { ...user, did }, hederaTx });
   } catch (err) {
     next(err);
   }
