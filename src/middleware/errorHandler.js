@@ -23,9 +23,19 @@ function errorHandler(err, req, res, next) {
     user: req.user ? req.user.id : undefined
   });
   const status = err.statusCode || 500;
-  res.status(status).json({
-    message: status === 500 ? 'Internal server error' : err.message
-  });
+  // Show full error details in production for debugging
+  if (process.env.NODE_ENV === 'production') {
+    res.status(status).json({
+      message: err.message,
+      stack: err.stack,
+      method: req.method,
+      url: req.originalUrl
+    });
+  } else {
+    res.status(status).json({
+      message: status === 500 ? 'Internal server error' : err.message
+    });
+  }
 }
 
 module.exports = errorHandler;
