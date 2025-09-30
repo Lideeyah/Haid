@@ -24,7 +24,7 @@ function errorHandler(err, req, res, next) {
   });
   const status = err.statusCode || 500;
   // Show full error details in production for debugging
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     res.status(status).json({
       message: err.message,
       stack: err.stack,
