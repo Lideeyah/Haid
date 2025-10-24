@@ -1,0 +1,94 @@
+# guardian/methodology.yaml
+name: "Humanitarian Aid Distribution Verification"
+description: "Immutable verification system for aid distribution to refugees"
+version: "1.0.0"
+topicId: "${HAID_EVENTS_TOPIC_ID}"
+
+# Define roles in the system
+roles:
+  - name: "NGO_Admin"
+    permissions: ["issue_vouchers", "register_events", "view_all"]
+  - name: "Volunteer"
+    permissions: ["scan_wristbands", "verify_distribution"]
+  - name: "Beneficiary"
+    permissions: ["view_own_history"]
+  - name: "Auditor"
+    permissions: ["view_all", "export_reports"]
+
+# Schema for Verifiable Credentials
+schemas:
+  - name: "RefugeeWristbandDID"
+    fields:
+      - name: "did"
+        type: "string"
+        required: true
+      - name: "wristbandId"
+        type: "string"
+        required: true
+      - name: "registrationDate"
+        type: "datetime"
+        required: true
+      - name: "issuer"
+        type: "string"
+        required: true
+
+  - name: "AidDistributionEvent"
+    fields:
+      - name: "eventId"
+        type: "string"
+        required: true
+      - name: "beneficiaryDID"
+        type: "string"
+        required: true
+      - name: "aidType"
+        type: "string"
+        enum: ["FOOD", "WATER", "MEDICAL", "SHELTER"]
+      - name: "quantity"
+        type: "number"
+      - name: "distributorDID"
+        type: "string"
+      - name: "timestamp"
+        type: "datetime"
+      - name: "location"
+        type: "string"
+      - name: "verified"
+        type: "boolean"
+
+# Workflow steps
+workflow:
+  - step: "1_Register_Beneficiary"
+    action: "Issue RefugeeWristbandDID credential"
+    role: "NGO_Admin"
+    output: "DID created and logged to HCS"
+    
+  - step: "2_Distribute_Aid"
+    action: "Scan wristband, log distribution event"
+    role: "Volunteer"
+    input: "Wristband QR code scan"
+    validation: "Check DID exists, prevent duplicate within 24h"
+    output: "Event logged to HCS with timestamp"
+    
+  - step: "3_Verify_Distribution"
+    action: "Confirm aid received"
+    role: "Beneficiary"
+    output: "Verification signature added to event"
+    
+  - step: "4_Audit_Trail"
+    action: "Query all events for transparency"
+    role: "Auditor"
+    output: "Immutable history from HCS"
+
+# Integration points
+integration:
+  hcs_topics:
+    - "${HAID_EVENTS_TOPIC_ID}"
+    - "${HAID_SCANS_TOPIC_ID}"
+  
+  storage:
+    type: "sqlite"
+    location: ":memory:"
+    
+  api_endpoints:
+    - "/scan" # Scan wristband and log to HCS
+    - "/verify/{did}" # Verify event immutability
+    - "/audit/{did}" # Full audit trail

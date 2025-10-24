@@ -1,166 +1,240 @@
-# Haid – Humanitarian Aid with Hedera
+# HAID - Humanitarian Aid Immutable Distribution
 
-**Haid** is a decentralized, transparent, and inclusive humanitarian aid distribution platform built on **Hedera Guardian**. It is designed to ensure **accountable, efficient, and verifiable aid delivery** to vulnerable populations.
+Blockchain-verified aid distribution system using Hedera Consensus Service (HCS) for transparent, immutable tracking of humanitarian aid to refugees.
 
----
+## 🎯 System Overview
 
-## Features
+**Problem:** Aid distribution lacks transparency, leading to fraud, duplicate claims, and donor mistrust.
 
-* **QR/NFC Wristbands:** Each aid recipient gets a wristband linked to a unique **DID (Decentralized Identifier)**.
-* **Aid Distribution Events:** NGOs can create and manage distributions (Morning, Afternoon, Evening).
-* **Scan & Verify:** Volunteers scan wristbands; all scans are logged on **Hedera Guardian**.
-* **Real-time Dashboards:** NGOs, donors, and auditors can view charts, geo-heatmaps, and KPIs in real time.
-* **Multi-language Support:** English, French, Swahili, Hausa, Arabic.
-* **Accessibility:** Voice guidance, high contrast mode, large text for ease of use.
-* **Exportable Reports:** Generate CSV/PDF reports for audits or donors.
+**Solution:** Every aid transaction is logged to Hedera HCS, creating an immutable audit trail that donors, NGOs, and auditors can verify.
 
----
+## 🏗️ Architecture
+```
+[Refugee Wristband QR] → [Volunteer Scans] → [Backend /scan API]
+                                                      ↓
+                                            [Hedera HCS Topic]
+                                                      ↓
+                                            [SQLite Cache + Indexer]
+                                                      ↓
+                                    [Dashboard APIs for Donors/Auditors]
+```
 
-## Users & Roles
+## 🚀 Quick Start
 
-* **Aid Recipients:** Scan wristbands to receive aid, access multi-language instructions.
-* **NGOs / Aid Organizations:** Create events, monitor distributions, generate reports.
-* **Donors / Governments:** View live dashboards and impact metrics.
-* **Volunteers / Field Staff:** Scan wristbands, verify aid delivery.
-* **Auditors / Watchdogs:** Access tamper-proof logs for accountability.
-
----
-
-## Tech Stack
-
-* **Frontend:** React / Next.js, charts with Recharts/D3.js, geo-maps.
-* **Backend:** Node.js / NestJS, REST APIs, role-based access control.
-* **Blockchain:** Hedera Guardian for logging distributions and issuing DIDs.
-* **Database:** PostgreSQL for off-chain storage, Guardian Indexer for visualization.
-* **Hardware:** NFC/QR wristbands integrated with mobile devices.
-
----
-
-## Hackathon MVP
-
-* Functional QR/NFC wristband scans
-* Guardian integration for verifiable logs
-* Multi-language, accessible dashboards
-* Real-time charts and geo-heatmaps
-* CSV/PDF export for audits and donors
-
----
-
-## Goal
-
-Haid demonstrates **transparent, inclusive, and scalable humanitarian aid delivery**, providing NGOs, donors, and governments with a trusted system for distributing resources efficiently and fairly.
-
-
-
-# Haid Backend API
-
-A Node.js backend server with Express and Hedera blockchain integration.
-
-## Features
-
-- ✅ Express.js RESTful API server
-- ✅ Health check endpoint (`/health`)
-- ✅ Aid collection endpoint with double-claim prevention (`/api/v1/collections`)
-- ✅ Hedera Guardian logging for successful collections
-- ✅ Hedera testnet integration ready
-- ✅ Environment configuration with dotenv
-- ✅ Security middleware (Helmet, CORS)
-- ✅ Request logging with Morgan
-- ✅ Structured folder organization
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   
-4. Edit `.env` file with your Hedera testnet credentials:
-   ```
-   HEDERA_OPERATOR_ID=0.0.your_account_id
-   HEDERA_OPERATOR_KEY=your_private_key
-   HEDERA_GUARDIAN_TOPIC_ID=0.0.your_topic_id
-   ```
-
-### Running the Server
-
-Development mode (with auto-restart):
+### 1. Install Dependencies
 ```bash
-npm run dev
+npm install
 ```
 
-Production mode:
+### 2. Configure Environment
 ```bash
-npm start
+cp .env.example .env
+# Edit .env with your Hedera testnet credentials
 ```
 
-The server will start on `http://localhost:3000`
-
-## API Endpoints
-
-### Health Check
-- **GET** `/health` - Returns server status and system information
-
-### API Root
-- **GET** `/api/v1` - API information and version
-
-### Events Analytics
-- **GET** `/api/v1/events/:id/logs` - Returns all collection records for a specific event
-- **GET** `/api/v1/events/:id/analytics` - Returns analytics summary with totalServed and duplicatesPrevented counts
-### Aid Collections
-- **POST** `/api/v1/collections` - Process aid collection request
-  - Body: `{ "refugeeDid": "string", "eventId": "string" }`
-  - Returns: Success with Guardian transaction details or error for duplicates
-- **GET** `/api/v1/collections/status?refugeeDid=...&eventId=...` - Check collection status
-
-## Project Structure
-
+Required `.env` variables:
 ```
-src/
-├── controllers/     # Route controllers
-├── routes/         # Express route definitions
-├── services/       # Business logic services
-├── middleware/     # Custom middleware
-└── config/         # Configuration files
+OPERATOR_ID=0.0.YOUR_ACCOUNT_ID
+OPERATOR_KEY=302e020100300506032b657004220420...
+HAID_EVENTS_TOPIC_ID=0.0.TOPIC_ID_1
+HAID_SCANS_TOPIC_ID=0.0.TOPIC_ID_2
 ```
 
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | 3000 |
-| `NODE_ENV` | Environment | development |
-| `HEDERA_OPERATOR_ID` | Hedera account ID | - |
-| `HEDERA_OPERATOR_KEY` | Hedera private key | - |
-| `HEDERA_GUARDIAN_TOPIC_ID` | Guardian topic ID for logging | - |
-| `API_PREFIX` | API route prefix | /api/v1 |
-
-## Dependencies
-
-- **express** - Web framework
-- **@hashgraph/sdk** - Hedera SDK for blockchain integration
-- **dotenv** - Environment variable management
-- **cors** - Cross-origin resource sharing
-- **helmet** - Security middleware
-- **morgan** - HTTP request logger
-
-## Development
-
-The project uses nodemon for development with auto-restart on file changes.
-
+### 3. Run the System
 ```bash
-npm run dev
+# Start HCS indexer (subscribes to topic, processes messages)
+node haid_indexer.js
+
+# Start API server (in another terminal)
+node app.js
+
+# Run acceptance tests
+node acceptanceTests.js
 ```
+
+## 📡 API Endpoints
+
+### **POST /scan** - Log Aid Distribution
+Scans wristband and logs event to HCS.
+
+**Request:**
+```bash
+curl -X POST http://localhost:3000/scan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wristbandId": "WB-000001",
+    "aidType": "FOOD",
+    "quantity": 1,
+    "location": "Camp Alpha",
+    "volunteerId": "volunteer_001"
+  }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "txId": "0.0.12345@1729767000.123456789",
+  "did": "did:hedera:testnet:abc123",
+  "eventId": "evt_2025_001",
+  "hcsTopicId": "0.0.5678"
+}
+```
+
+### **GET /verify/{did}** - Verify Event Immutability
+Returns HCS consensus proof for a DID's events.
+
+**Request:**
+```bash
+curl http://localhost:3000/verify/did:hedera:testnet:abc123
+```
+
+**Response:**
+```json
+{
+  "did": "did:hedera:testnet:abc123",
+  "eventsCount": 5,
+  "immutable": true,
+  "hcsProof": {
+    "topicId": "0.0.5678",
+    "consensusTimestamp": "1729767000.123456789",
+    "sequenceNumber": 42
+  }
+}
+```
+
+### **GET /audit/{did}** - Full Audit Trail
+Returns complete history of all events for a DID.
+
+**Request:**
+```bash
+curl http://localhost:3000/audit/merge/did:hedera:testnet:abc123
+```
+
+**Response:**
+```json
+{
+  "did": "did:hedera:testnet:abc123",
+  "history": [
+    {
+      "type": "DID_REGISTRATION",
+      "timestamp": "2025-10-24T10:00:00Z",
+      "txId": "tx_1729767000"
+    },
+    {
+      "type": "SCAN",
+      "eventId": "evt_2025_001",
+      "aidType": "FOOD",
+      "timestamp": "2025-10-24T11:30:00Z",
+      "txId": "tx_1729770600"
+    }
+  ],
+  "overrides": []
+}
+```
+
+### **GET /api/dashboard/donor** - Donor Dashboard
+Statistics for donors to track their aid impact.
+
+**Response:**
+```json
+{
+  "dashboard": "Donor Dashboard",
+  "stats": {
+    "totalDistributions": 1250,
+    "uniqueBeneficiaries": 487,
+    "aidTypes": {
+      "FOOD": 650,
+      "WATER": 300,
+      "MEDICAL": 200,
+      "SHELTER": 100
+    }
+  }
+}
+```
+
+### **GET /api/dashboard/auditor** - Auditor Dashboard
+Full transparency for auditors and regulators.
+
+**Response:**
+```json
+{
+  "dashboard": "Auditor Dashboard",
+  "audit": {
+    "totalEvents": 1250,
+    "eventsByType": {
+      "DID_REGISTRATION": 487,
+      "SCAN": 750,
+      "VOUCHER": 13
+    },
+    "verificationStatus": {
+      "verified": 1248,
+      "pending": 2
+    }
+  }
+}
+```
+
+## 🧪 Testing
+```bash
+# Run acceptance tests (creates topics, registers DIDs, logs events)
+node acceptanceTests.js
+
+# Test scan workflow
+curl -X POST http://localhost:3000/scan -d '{"wristbandId":"WB-TEST-001","aidType":"FOOD"}'
+
+# Verify immutability
+curl http://localhost:3000/verify/did:hedera:testnet:test123
+```
+
+## 📊 Guardian Methodology
+
+See `guardian/methodology.yaml` for the complete policy definition including:
+- Roles (NGO Admin, Volunteer, Beneficiary, Auditor)
+- Verifiable Credential schemas
+- Workflow steps with HCS logging
+- Duplicate prevention rules
+
+## 🔐 Security Features
+
+- ✅ **Immutable Logging:** All events written to Hedera HCS (Byzantine fault-tolerant consensus)
+- ✅ **DID-based Identity:** Each wristband has a unique DID
+- ✅ **Duplicate Prevention:** Cannot claim same aid type within 24 hours
+- ✅ **Audit Trail:** Every transaction permanently recorded with consensus timestamp
+- ✅ **Verifiable Credentials:** Mock VC issuance for beneficiary registration
+
+## 🎬 Demo Flow
+
+1. **NGO registers refugee:** Creates DID, issues VC, logs to HCS
+2. **Volunteer distributes aid:** Scans wristband QR, logs event to HCS
+3. **System prevents duplicates:** Checks HCS history before allowing distribution
+4. **Donor views impact:** Dashboard shows real-time statistics
+5. **Auditor verifies:** Full transparency via immutable HCS records
+
+## 📦 Project Structure
+```
+haid/
+├── guardian/
+│   └── methodology.yaml        # Guardian policy definition
+├── src/
+│   ├── controllers/            # API handlers
+│   ├── routes/                 # Express routes
+│   ├── services/               # Business logic
+│   └── config/                 # Configuration
+├── haid_indexer.js             # HCS subscriber
+├── acceptanceTests.js          # Integration tests
+├── app.js                      # Express server
+├── wallets.js                  # DID/wallet simulation
+└── README.md                   # This file
+```
+
+## 🌍 Impact
+
+- **Transparency:** Donors see exactly where their aid goes
+- **Fraud Prevention:** Immutable records prevent duplicate claims
+- **Accountability:** NGOs can prove aid delivery to regulators
+- **Efficiency:** Real-time tracking reduces administrative overhead
+
+## 📜 License
+
+MIT License - Built for humanitarian aid transparency

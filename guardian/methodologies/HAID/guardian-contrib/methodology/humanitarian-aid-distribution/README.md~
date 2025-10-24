@@ -1,0 +1,45 @@
+# HAID: Hedera-Aware Indexer & Dashboard
+
+## Overview
+HAID is a collaborative project that demonstrates how Hedera Hashgraph can be used to record, index, and visualize important events such as scans, vouchers, or compliance activities.  
+The system integrates Hedera Consensus Service (HCS) with an indexer and a visualization frontend.
+
+## Team Roles
+- **Backend Developer**: Handles APIs, database integration, and business logic.
+- **Frontend Developer**: Builds the dashboard (charts, heatmaps, summaries).
+- **Hedera Developer**: Implements Hedera-specific logic (HCS topics, Guardian Indexer integration, JSON schemas, message enrichment).
+
+## Features
+- Register and use Hedera Consensus Service (HCS) topics.
+- Publish structured JSON messages (scan results, vouchers, events).
+- Subscribe to Guardian Indexer and enrich HCS messages with off-chain data.
+- Store enriched records in a read-optimized database.
+- Visualize records in a web-based dashboard.
+
+## Project Structure
+haid-guardian-contrib/
+│── src/ # Project source files
+│── methodology.yaml # HAID methodology steps
+│── sample-record.json # Example HCS enriched record
+│── README.md # Project documentation
+
+
+## Getting Started
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/lideeyah/haid.git
+   cd haid-guardian-contrib
+
+##Install dependencies:
+
+npm install
+
+
+##Run the backend service:
+
+npm run start:backend
+
+
+##Run the frontend dashboard:
+
+npm run start:frontend

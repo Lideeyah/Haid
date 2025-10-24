@@ -1,0 +1,18 @@
+{
+  "messages": [
+    {
+      "type": "scan",
+      "did": "did:hedera:abc123",
+      "eventId": "evt1",
+      "txId": "tx_1759198559371"
+    }
+  ],
+  "overrides": [
+    {
+      "oldDid": "did:hedera:abc123",
+      "newDid": "did:hedera:def456",
+      "reason": "Lost wristband",
+      "txId": "tx_1759198587931"
+    }
+  ]
+}

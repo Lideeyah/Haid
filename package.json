@@ -11,6 +11,7 @@
   "keywords": ["hedera", "blockchain", "api", "express"],
   "author": "Lydia",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "@hashgraph/sdk": "^2.73.1",
     "cors": "^2.8.5",
