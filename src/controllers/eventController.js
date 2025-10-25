@@ -2,6 +2,7 @@
 
 const Event = require('../models/Event');
 const User = require('../models/User');
+const AidLog = require('../models/AidLog');
 const { validationResult } = require('express-validator');
 
 const { submitMessage } = require("../utils/hedera");
@@ -50,13 +51,35 @@ exports.createEvent = async (req, res, next) => {
       quantity: quantity ? Number(quantity) : null,
       supplies: supplies || [],
       volunteers: [],
+      ngo: req.user.id,
       startTime: new Date(startTime),
       endTime: new Date(endTime),
       hederaTx,
       createdAt: new Date()
     });
     await event.save();
-    res.status(201).json(event);
+    // Map to frontend EventDetail shape
+    const saved = event.toObject();
+    const result = {
+      id: String(saved._id),
+      name: saved.name,
+      type: saved.type,
+      location: saved.location,
+      description: saved.description,
+      quantity: saved.quantity,
+      supplies: saved.supplies,
+      volunteersCount: (saved.volunteers || []).length,
+      volunteers: [],
+      totalServed: 0,
+      duplicates: 0,
+      startTime: saved.startTime ? new Date(saved.startTime).toISOString() : null,
+      endTime: saved.endTime ? new Date(saved.endTime).toISOString() : null,
+      date: saved.startTime ? new Date(saved.startTime).toISOString() : null,
+      createdAt: saved.createdAt ? new Date(saved.createdAt).toISOString() : new Date().toISOString(),
+      updatedAt: saved.updatedAt ? new Date(saved.updatedAt).toISOString() : new Date().toISOString(),
+      hederaTx: saved.hederaTx || null,
+    };
+    res.status(201).json(result);
   } catch (err) {
     next(err);
   }
@@ -64,11 +87,32 @@ exports.createEvent = async (req, res, next) => {
 
 exports.getEvents = async (req, res, next) => {
   try {
-    const events = await Event.find({}).populate('volunteers');
-    // Add volunteersCount to each event
-    const eventsWithCount = events.map(event => ({
-      ...event.toObject(),
-      volunteersCount: event.volunteers.length
+    const events = await Event.find({ deleted: { $ne: true } }).populate('volunteers');
+    const eventsWithCount = await Promise.all(events.map(async event => {
+      const obj = event.toObject();
+      // compute totalServed and duplicates from AidLog
+      const logs = await AidLog.find({ event: obj._id });
+      const totalServed = logs.filter(l => l.status === 'collected').length;
+      const duplicates = logs.filter(l => l.status && l.status !== 'collected').length;
+      return {
+        id: String(obj._id),
+        name: obj.name,
+        type: obj.type,
+        location: obj.location,
+        description: obj.description,
+        quantity: obj.quantity,
+        supplies: obj.supplies || [],
+        volunteersCount: (obj.volunteers || []).length,
+        volunteers: (obj.volunteers || []).map(v => ({ id: String(v._id), name: v.name, email: v.email, location: v.location || null })),
+        totalServed,
+        duplicates,
+        startTime: obj.startTime ? new Date(obj.startTime).toISOString() : null,
+        endTime: obj.endTime ? new Date(obj.endTime).toISOString() : null,
+        date: obj.startTime ? new Date(obj.startTime).toISOString() : null,
+        createdAt: obj.createdAt ? new Date(obj.createdAt).toISOString() : null,
+        updatedAt: obj.updatedAt ? new Date(obj.updatedAt).toISOString() : null,
+        hederaTx: obj.hederaTx || null,
+      };
     }));
     res.json(eventsWithCount);
   } catch (err) {
@@ -84,13 +128,29 @@ exports.getEvent = async (req, res, next) => {
   try {
     const eventId = req.params.id;
     const event = await Event.findById(eventId).populate('volunteers');
-    if (!event) return res.status(404).json({ message: 'Event not found' });
-    // For totalServed and duplicates, you may need to refactor AidLog queries as well
+    if (!event || event.deleted) return res.status(404).json({ message: 'Event not found' });
+    const obj = event.toObject();
+    const logs = await AidLog.find({ event: obj._id });
+    const totalServed = logs.filter(l => l.status === 'collected').length;
+    const duplicates = logs.filter(l => l.status && l.status !== 'collected').length;
     res.json({
-      ...event.toObject(),
-      volunteersCount: event.volunteers.length,
-      volunteers: event.volunteers,
-      location: event.location
+      id: String(obj._id),
+      name: obj.name,
+      type: obj.type,
+      location: obj.location,
+      description: obj.description,
+      quantity: obj.quantity,
+      supplies: obj.supplies || [],
+      volunteersCount: (obj.volunteers || []).length,
+      volunteers: (obj.volunteers || []).map(v => ({ id: String(v._id), name: v.name, email: v.email, location: v.location || null })),
+      totalServed,
+      duplicates,
+      startTime: obj.startTime ? new Date(obj.startTime).toISOString() : null,
+      endTime: obj.endTime ? new Date(obj.endTime).toISOString() : null,
+      date: obj.startTime ? new Date(obj.startTime).toISOString() : null,
+      createdAt: obj.createdAt ? new Date(obj.createdAt).toISOString() : null,
+      updatedAt: obj.updatedAt ? new Date(obj.updatedAt).toISOString() : null,
+      hederaTx: obj.hederaTx || null,
     });
   } catch (err) {
     next(err);
@@ -121,6 +181,59 @@ exports.assignVolunteer = async (req, res, next) => {
     event.volunteers.push(volunteerId);
     await event.save();
     res.json({ message: 'Volunteer assigned to event' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Update an event (NGO only, must be owner)
+exports.updateEvent = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const eventId = req.params.id;
+    const event = await Event.findById(eventId);
+    if (!event || event.deleted) return res.status(404).json({ message: 'Event not found' });
+    // Only the NGO that created the event or an admin/auditor could edit; enforce NGO ownership
+    if (String(event.ngo) !== String(req.user._id) && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to edit this event' });
+    }
+
+    const updatable = ['name', 'type', 'location', 'description', 'quantity', 'supplies', 'startTime', 'endTime'];
+    updatable.forEach(field => {
+      if (req.body[field] !== undefined) {
+        if (field === 'quantity') event[field] = Number(req.body[field]);
+        else if (field === 'startTime' || field === 'endTime') event[field] = new Date(req.body[field]);
+        else event[field] = req.body[field];
+      }
+    });
+
+    await event.save();
+    res.json(event);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Soft-delete an event (NGO only, must be owner)
+exports.deleteEvent = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const eventId = req.params.id;
+    const event = await Event.findById(eventId);
+    if (!event || event.deleted) return res.status(404).json({ message: 'Event not found' });
+    if (String(event.ngo) !== String(req.user._id) && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to delete this event' });
+    }
+    // Soft delete
+    event.deleted = true;
+    await event.save();
+    res.json({ message: 'Event deleted' });
   } catch (err) {
     next(err);
   }

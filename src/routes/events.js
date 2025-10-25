@@ -123,6 +123,22 @@ const getEventValidation = [
   param("id").isMongoId().withMessage("Valid event id required"),
 ];
 
+const updateEventValidation = [
+  param('id').isMongoId().withMessage('Valid event id required'),
+  body('name').optional().isString().trim(),
+  body('type').optional().isString().trim(),
+  body('location').optional().isString().trim(),
+  body('description').optional().isString().trim(),
+  body('quantity').optional().isInt({ min: 0 }),
+  body('supplies').optional().isArray(),
+  body('startTime').optional().isISO8601(),
+  body('endTime').optional().isISO8601(),
+];
+
+const deleteEventValidation = [
+  param('id').isMongoId().withMessage('Valid event id required'),
+];
+
 const assignVolunteerValidation = [
   body("eventId").isMongoId().withMessage("Valid eventId required"),
   body("volunteerId").isMongoId().withMessage("Valid volunteerId required"),
@@ -268,6 +284,66 @@ router.get(
   getEventValidation,
   eventController.getEvent
 );
+
+/**
+ * @swagger
+ * /api/events/{id}:
+ *   put:
+ *     summary: Update an event (NGO owner only)
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Event id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *               supplies:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Event updated
+ */
+router.put('/:id', authMiddleware, roleMiddleware(['ngo']), updateEventValidation, eventController.updateEvent);
+
+/**
+ * @swagger
+ * /api/events/{id}:
+ *   delete:
+ *     summary: Delete an event (NGO owner only)
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Event id
+ *     responses:
+ *       200:
+ *         description: Event deleted
+ */
+router.delete('/:id', authMiddleware, roleMiddleware(['ngo']), deleteEventValidation, eventController.deleteEvent);
 
 /**
  * @swagger

@@ -134,6 +134,8 @@ app.use('/api/dashboard', require('./src/routes/dashboard'));
 app.use('/api/volunteers', require('./src/routes/volunteers'));
 app.use('/api/donor', require('./src/routes/donor'));
 app.use('/api/auditor', require('./src/routes/auditor'));
+app.use('/api/beneficiaries', require('./src/routes/beneficiaries'));
+app.use('/api/ngo', require('./src/routes/ngo'));
 
 app.get('/', (req, res) => res.send('Haid API running'));
 // Health check endpoint with beautiful HTML display

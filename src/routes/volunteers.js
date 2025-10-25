@@ -1,3 +1,4 @@
+
 /**
  * @swagger
  * components:
@@ -34,11 +35,11 @@
 
 // src/routes/volunteers.js
 const express = require("express");
-const { param } = require("express-validator");
 const router = express.Router();
 const volunteerController = require("../controllers/volunteerController");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const { body, param, query } = require("express-validator");
 
 /**
  * @swagger
@@ -116,6 +117,64 @@ router.get(
   roleMiddleware(["admin", "ngo"]),
   param("id").isMongoId().withMessage("Valid volunteer ID required"),
   volunteerController.getVolunteer
+);
+
+// Volunteer activity
+router.get(
+  '/:id/activity',
+  authMiddleware,
+  roleMiddleware(['admin', 'ngo']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  volunteerController.getVolunteerActivity
+);
+
+// Volunteer rating
+router.get(
+  '/:id/rating',
+  authMiddleware,
+  roleMiddleware(['admin', 'ngo']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  volunteerController.getVolunteerRating
+);
+
+
+// Set volunteer's NGO
+router.patch(
+  '/:id/ngo',
+  authMiddleware,
+  roleMiddleware(['volunteer', 'admin']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  body('ngoId').isMongoId().withMessage('Valid NGO ID required'),
+  volunteerController.setVolunteerNGO
+);
+
+// Get all scans by volunteer
+router.get(
+  '/:id/scans',
+  authMiddleware,
+  roleMiddleware(['volunteer', 'admin', 'ngo']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  volunteerController.getVolunteerScans
+);
+
+// Get events assigned to volunteer (with date/status filter)
+router.get(
+  '/:id/events',
+  authMiddleware,
+  roleMiddleware(['volunteer', 'admin', 'ngo']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  query('date').optional().isISO8601(),
+  query('status').optional().isIn(['upcoming', 'completed']),
+  volunteerController.getVolunteerEvents
+);
+
+// Get volunteer stats
+router.get(
+  '/:id/stats',
+  authMiddleware,
+  roleMiddleware(['volunteer', 'admin', 'ngo']),
+  param('id').isMongoId().withMessage('Valid volunteer ID required'),
+  volunteerController.getVolunteerStats
 );
 
 module.exports = router;

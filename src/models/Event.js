@@ -15,6 +15,8 @@ const eventSchema = new mongoose.Schema({
     timestamp: Date
   }],
   guardianMatch: { type: Boolean },
+  ngo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  deleted: { type: Boolean, default: false },
   startTime: { type: Date },
   endTime: { type: Date },
   hederaTx: { type: mongoose.Schema.Types.Mixed },
