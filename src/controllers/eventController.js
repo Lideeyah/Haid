@@ -87,7 +87,13 @@ exports.createEvent = async (req, res, next) => {
 
 exports.getEvents = async (req, res, next) => {
   try {
-    const events = await Event.find({ deleted: { $ne: true } }).populate('volunteers');
+    // By default return non-deleted events.
+    // If the requester is an NGO user, restrict results to events created by that NGO.
+    const filter = { deleted: { $ne: true } };
+    if (req.user && req.user.role === 'ngo') {
+      filter.ngo = req.user._id;
+    }
+    const events = await Event.find(filter).populate('volunteers');
     const eventsWithCount = await Promise.all(events.map(async event => {
       const obj = event.toObject();
       // compute totalServed and duplicates from AidLog
