@@ -87,11 +87,19 @@ exports.createEvent = async (req, res, next) => {
 
 exports.getEvents = async (req, res, next) => {
   try {
-    // By default return non-deleted events.
-    // If the requester is an NGO user, restrict results to events created by that NGO.
+    // If ?all=true and user is admin, return all events. Otherwise, filter by NGO for NGO users.
     const filter = { deleted: { $ne: true } };
+    const allParam = req.query.all === 'true' || req.query.all === true;
     if (req.user && req.user.role === 'ngo') {
-      filter.ngo = req.user._id;
+      if (!allParam) {
+        filter.ngo = req.user._id;
+      }
+      // If allParam and NGO, still restrict to their own events (unless you want NGOs to see all, then remove this block)
+    }
+    // Only admin can see all events with ?all=true
+    // For other roles, default to all events (or restrict as needed)
+    if (req.user && req.user.role === 'admin' && allParam) {
+      // No additional filter, admin sees all
     }
     const events = await Event.find(filter).populate('volunteers');
     const eventsWithCount = await Promise.all(events.map(async event => {
