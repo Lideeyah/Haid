@@ -86,9 +86,8 @@ const registerValidation = [
     .isIn(["beneficiary", "donor", "volunteer", "ngo", "auditor"])
     .withMessage("Valid role is required"),
   body("password")
-    .if(body("role").not().equals("beneficiary"))
     .isLength({ min: 6 })
-    .withMessage("Password (min 6 chars) required for non-beneficiaries"),
+    .withMessage("Password (min 6 chars) required for all users"),
 ];
 
 const loginValidation = [
