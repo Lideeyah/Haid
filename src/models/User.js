@@ -6,6 +6,20 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   role: { type: String, required: true },
   did: { type: String, unique: true },
+  hederaTx: {
+    status: String,
+    transactionId: String,
+    sequenceNumber: Number,
+    runningHash: String,
+  },
+  didPublicKey: { type: String },
+  didPrivateKey: { type: String, select: false }, // select: false hides it from queries by default
+  didHederaTx: {
+    status: String,
+    transactionId: String,
+    sequenceNumber: Number,
+    runningHash: String,
+  },
   qrCodeUrl: { type: String },
   ngo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   ratings: [{

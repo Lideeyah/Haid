@@ -18,18 +18,21 @@ exports.register = async (req, res, next) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
-    let did, qrCodeUrl, hederaTx;
+  let did, qrCodeUrl, hederaTx, didPublicKey, didPrivateKey, didHederaTx;
     const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
     // Generate UUID for user before Hedera submission
     const { v4: uuidv4 } = require('uuid');
     const userId = uuidv4();
 
+
     // Generate anchored DID first, with userId
     let didResult;
     try {
       didResult = await generateAnchoredDID(userId, role);
       did = didResult.did;
+      didPublicKey = didResult.publicKey;
+      didPrivateKey = didResult.privateKey;
       if (didResult.hederaTx) {
         hederaTx = {
           status: didResult.hederaTx.status,
@@ -37,8 +40,10 @@ exports.register = async (req, res, next) => {
           sequenceNumber: Number(didResult.hederaTx.sequenceNumber),
           runningHash: didResult.hederaTx.runningHash,
         };
+        didHederaTx = hederaTx;
       } else {
         hederaTx = null;
+        didHederaTx = null;
       }
     } catch (hcsErr) {
       return res.status(500).json({ message: "Failed to anchor DID on blockchain." });
@@ -51,6 +56,10 @@ exports.register = async (req, res, next) => {
       role,
       password: hashedPassword,
       did,
+      hederaTx,
+      didPublicKey,
+      didPrivateKey,
+      didHederaTx,
       createdAt: new Date()
     });
     await user.save();
@@ -59,9 +68,12 @@ exports.register = async (req, res, next) => {
       qrCodeUrl = await generateQrCode(did);
       user.qrCodeUrl = qrCodeUrl;
       await user.save();
-      return res.status(201).json({ beneficiaryDid: did, qrCodeUrl, hederaTx });
+      // Do not expose private key in API response
+      return res.status(201).json({ beneficiaryDid: did, qrCodeUrl, hederaTx, didPublicKey, didHederaTx });
     }
-    res.status(201).json({ message: 'User registered', user: { ...user.toObject(), did }, hederaTx });
+    await user.save();
+    // Do not expose private key in API response
+    res.status(201).json({ message: 'User registered', user: { ...user.toObject(), did, didPublicKey, didHederaTx }, hederaTx });
   } catch (err) {
     next(err);
   }

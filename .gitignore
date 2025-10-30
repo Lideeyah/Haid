@@ -4,5 +4,8 @@ node_modules
 
 /src/generated/prisma
 Note.txt
-Noted.txt
-Update.txt
+Noting.txt
+Updating.txt
+/scripts/migrate_user_hederaTx.js
+/scripts
+/guardian
