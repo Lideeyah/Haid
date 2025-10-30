@@ -27,9 +27,9 @@ const client = Client.forTestnet().setOperator(operatorId, operatorKey);
  * @returns {Promise<{accountId: string, privateKey: string, publicKey: string}>}
  */
 async function createHederaAccount(initialBalance = 1) {
-  const newKey = PrivateKey.generateECDSA();
+  const newKey = PrivateKey.generateED25519();
   const response = await new AccountCreateTransaction()
-    .setKeyWithoutAlias(newKey.publicKey)
+    .setKey(newKey.publicKey)
     .setInitialBalance(new Hbar(Number(initialBalance)))
     .execute(client);
   const receipt = await response.getReceipt(client);
