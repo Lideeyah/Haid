@@ -216,6 +216,7 @@ exports.login = async (req, res, next) => {
         hederaAccountId: user.hederaAccountId,
         hederaPublicKey: user.hederaPublicKey,
         hbarBalance,
+        qrCodeUrl: user.qrCodeUrl,
         // Do NOT include private key in response
       }
     });
@@ -236,5 +237,10 @@ exports.getMe = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-  res.json({ user: req.user });
+  // Add qrCodeUrl to user object if available
+  const userObj = req.user && req.user.toObject ? req.user.toObject() : req.user;
+  if (req.user && req.user.qrCodeUrl) {
+    userObj.qrCodeUrl = req.user.qrCodeUrl;
+  }
+  res.json({ user: userObj });
 };

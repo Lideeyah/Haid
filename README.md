@@ -205,7 +205,7 @@ _AKA Buzz brain_
 
 ## 🚦 API Endpoints
 
-See [`PAYMENT_API_DOC.md`](./API_DOC.md) for full API documentation, including request/response examples, error handling, and payment logic.
+See [`API_DOC.md`](./API_DOC.md) for full API documentation, including request/response examples, error handling, and payment logic.
 
 ---
 
