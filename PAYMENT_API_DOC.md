@@ -85,7 +85,8 @@ This document describes the backend payment integration using Hedera Hashgraph f
   ```json
   {
     "recipientAccountId": "string", // Hedera account ID of recipient
-    "amount": "number" // Amount in HBAR
+    "amount": "number", // Amount in HBAR
+    "note": "Donation for October campaign"
   }
   ```
 - **Headers:**
