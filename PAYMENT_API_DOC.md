@@ -1,14 +1,38 @@
-# Hedera Payment Integration API Documentation
 
-This document describes the backend payment integration using Hedera Hashgraph for the HAID platform. It covers user onboarding, HBAR wallet creation, payment endpoints, and how to retrieve HBAR balances. This guide is for frontend developers integrating payment and wallet features.
+<div align="center">
+  <img src="https://res.cloudinary.com/df2q6gyuq/image/upload/v1759163480/haid-logo_uwsyvc.jpg" alt="Haid Logo" width="100" />
+  <h1>🪙 <b>Haid API & Payment Documentation</b></h1>
+  <p>
+    <img src="https://img.shields.io/badge/Node.js-18.x-green?style=flat-square" alt="Node.js" />
+    <img src="https://img.shields.io/badge/Hedera-Hashgraph-5C2D91?style=flat-square&logo=hedera-hashgraph" alt="Hedera" />
+    <img src="https://img.shields.io/badge/Swagger-API-yellow?style=flat-square" alt="Swagger" />
+  </p>
+  <p><b>All endpoints are blockchain-anchored, secure, and ready for Africa-scale humanitarian impact.</b></p>
+</div>
 
 ---
 
-## 1. User Onboarding & Hedera Wallet Creation
+## 📚 Table of Contents
+| Section | Description |
+|---|---|
+| [Authentication & User](#authentication--user) | Register, login, profile |
+| [Donations (HBAR)](#donations-hbar) | HBAR payment endpoints |
+| [Donor Dashboard](#donor-dashboard) | Donor stats & impact |
+| [Events](#events) | Event management |
+| [Volunteers](#volunteers) | Volunteer endpoints |
+| [Scans (Aid Distribution)](#scans-aid-distribution) | Aid distribution logic |
+| [NGO/Admin Dashboard](#ngoadmin-dashboard) | General stats |
+| [Auditor Dashboard](#auditor-dashboard) | Audit logs & verification |
+| [Error Handling](#error-handling) | Error responses |
 
-### Registration (v2)
-- **Endpoint:** `POST /api/v2/register`
-- **Purpose:** Registers a user and automatically creates a custodial Hedera wallet.
+---
+
+
+## 🔐 Authentication & User
+
+### Register (v2)
+- **POST** `/api/v2/register`
+- Registers a user and creates a custodial Hedera wallet.
 - **Request Body:**
   ```json
   {
@@ -36,19 +60,10 @@ This document describes the backend payment integration using Hedera Hashgraph f
     }
   }
   ```
-- **Initial HBAR Funding:**
-  - Donor: 5 HBAR
-  - NGO: 3 HBAR
-  - Beneficiary: 2 HBAR
-  - Others: 3 HBAR
-
----
-
-## 2. Login & HBAR Balance
 
 ### Login
-- **Endpoint:** `POST /api/login`
-- **Purpose:** Authenticates user and returns JWT + Hedera wallet info + live HBAR balance.
+- **POST** `/api/login`
+- Authenticates user and returns JWT + Hedera wallet info + live HBAR balance.
 - **Request Body:**
   ```json
   {
@@ -68,36 +83,284 @@ This document describes the backend payment integration using Hedera Hashgraph f
       "role": "string",
       "hederaAccountId": "string",
       "hederaPublicKey": "string",
-      "hbarBalance": "number"
+      "hbarBalance": 3.5
     }
   }
   ```
-- **Note:** `hbarBalance` is fetched live from Hedera, not stored in the database.
+
+### Logout
+- **POST** `/api/logout`
+- Logs out user (clears JWT cookie).
+- **Response:**
+  ```json
+  { "message": "Logged out successfully" }
+  ```
+
+### Get Current User
+- **GET** `/api/me`
+- Returns the authenticated user's profile.
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "user": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "role": "string",
+      "hederaAccountId": "string",
+      "hederaPublicKey": "string"
+    }
+  }
+  ```
 
 ---
 
-## 3. HBAR Payment (Donation)
+
+## 💸 Donations (HBAR)
 
 ### Make a Donation
-- **Endpoint:** `POST /api/donations`
-- **Purpose:** Donor sends HBAR to NGO or beneficiary.
+- **POST** `/api/donations/hbar`
+- Donor sends HBAR to NGO or beneficiary.
+- **Headers:** `Authorization: Bearer <JWT>`
 - **Request Body:**
   ```json
   {
     "recipientAccountId": "string", // Hedera account ID of recipient
-    "amount": "number", // Amount in HBAR
+    "amount": 2.5, // Amount in HBAR
     "note": "Donation for October campaign"
   }
   ```
-- **Headers:**
-  - `Authorization: Bearer <JWT>`
 - **Response:**
   ```json
   {
     "message": "Donation successful",
     "transactionId": "string",
-    "amount": "number",
+    "amount": 2.5,
     "recipientAccountId": "string"
+  }
+  ```
+
+---
+
+
+## 📊 Donor Dashboard
+
+### Get Donor Dashboard & Stats
+- **GET** `/api/donor/dashboard`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "totalContribution": 100.5,
+    "peopleHelped": 12,
+    "locationsReached": ["Lagos", "Abuja"],
+    "impactScore": 1206,
+    "monthlyImpact": {
+      "2025-10": 50,
+      "2025-09": 30.5
+    },
+    "donationFlow": [
+      { "amount": 10, "recipient": "<userId>", "timestamp": "2025-10-01T12:00:00Z", "txId": "..." }
+    ],
+    "recentDistributions": [
+      { "amount": 10, "recipient": "<userId>", "timestamp": "2025-10-01T12:00:00Z", "txId": "..." }
+    ],
+    "distributionProgress": {
+      "totalEvents": 20,
+      "completedEvents": 15,
+      "percentCompleted": 75
+    },
+    "geographicImpact": [
+      { "location": "Lagos", "events": 8 },
+      { "location": "Abuja", "events": 5 }
+    ]
+  }
+  ```
+
+---
+
+
+## 🎉 Events
+
+### Create Event
+- **POST** `/api/events`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Request Body:**
+  ```json
+  {
+    "name": "Food Drive",
+    "type": "food",
+    "location": "Lagos",
+    "description": "Distributing food",
+    "quantity": 100,
+    "supplies": ["rice", "beans"],
+    "startTime": "2025-10-01T09:00:00Z",
+    "endTime": "2025-10-01T17:00:00Z"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": "...",
+    "name": "Food Drive",
+    "type": "food",
+    "location": "Lagos",
+    "description": "Distributing food",
+    "quantity": 100,
+    "supplies": ["rice", "beans"],
+    "volunteersCount": 0,
+    "volunteers": [],
+    "totalServed": 0,
+    "duplicates": 0,
+    "startTime": "2025-10-01T09:00:00Z",
+    "endTime": "2025-10-01T17:00:00Z",
+    "createdAt": "2025-09-29T12:00:00Z",
+    "hederaTx": {
+      "status": "SUCCESS",
+      "transactionId": "...",
+      "sequenceNumber": 456,
+      "runningHash": "..."
+    }
+  }
+  ```
+
+### List Events
+- **GET** `/api/events`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:** Array of event objects (see above).
+
+### Get Event by ID
+- **GET** `/api/events/:id`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:** Event object (see above).
+
+### Assign Volunteer to Event
+- **POST** `/api/events/assign-volunteer`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Request Body:**
+  ```json
+  {
+    "eventId": "...",
+    "volunteerId": "..."
+  }
+  ```
+- **Response:**
+  ```json
+  { "message": "Volunteer assigned to event" }
+  ```
+
+---
+
+
+## 🦸 Volunteers
+
+### List Volunteers
+- **GET** `/api/volunteers`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:** Array of volunteer objects.
+
+### Get Volunteer by ID
+- **GET** `/api/volunteers/:id`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:** Volunteer object.
+
+---
+
+
+## 📦 Scans (Aid Distribution)
+
+### Scan Beneficiary QR (Aid Distribution)
+- **POST** `/api/scans`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Request Body:**
+  ```json
+  {
+    "eventId": "...",
+    "beneficiaryDid": "did:haid:..."
+  }
+  ```
+- **Response:**
+  - If aid collected:
+    ```json
+    {
+      "status": "collected",
+      "hederaTx": { ... },
+      "timestamp": "2025-09-29T12:34:56Z"
+    }
+    ```
+  - If duplicate blocked:
+    ```json
+    { "status": "duplicate-blocked" }
+    ```
+
+---
+
+
+## 🏢 NGO/Admin Dashboard
+
+### General Stats
+- **GET** `/api/dashboard/general-stats`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "eventsCount": 10,
+    "volunteersCount": 25,
+    "beneficiariesCount": 120,
+    "aidDistributed": 110,
+    "aidTypes": ["food", "medicine"]
+  }
+  ```
+
+---
+
+
+## 🕵️ Auditor Dashboard
+
+### Get Auditor Dashboard Logs & Verification
+- **GET** `/api/auditor/dashboard?eventId=...&date=YYYY-MM-DD`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "logs": [
+      {
+        "did": "did:haid:...",
+        "hederaTx": { ... },
+        "status": "collected",
+        "timestamp": "2025-09-29T12:34:56Z"
+      }
+    ],
+    "guardianMatch": true
+  }
+  ```
+
+---
+
+
+## ❗ Error Handling
+
+- All endpoints return clear error messages and status codes.
+- Example error response:
+  ```json
+  {
+    "errors": [
+      { "msg": "Valid email is required", "param": "email", "location": "body" }
+    ]
+  }
+  ```
+- Unauthorized, forbidden, not found, and duplicate actions are clearly indicated.
+
+---
+
+
+---
+
+## 📝 Notes
+- All endpoints require authentication unless otherwise stated.
+- All blockchain-anchored actions return `hederaTx` in the response.
+- For any questions, see the README or contact the backend team.
   }
   ```
 - **Notes:**
