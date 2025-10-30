@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   role: { type: String, required: true },
   did: { type: String, unique: true },
+  // Hedera custodial wallet fields
+  hederaAccountId: { type: String, unique: true, sparse: true },
+  hederaPublicKey: { type: String },
+  hederaPrivateKey: { type: String, select: false },
   hederaTx: {
     status: String,
     transactionId: String,

@@ -153,6 +153,9 @@ const loginValidation = [
  */
 router.post("/register", registerValidation, authController.register);
 
+// v2 registration route for custodial onboarding
+router.post("/v2/register", registerValidation, authController.registerV2);
+
 /**
  * @swagger
  * /api/auth/login:

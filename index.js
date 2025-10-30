@@ -129,6 +129,7 @@ const authMiddleware = require('./src/middleware/authMiddleware');
 app.get('/api/auth/me', authMiddleware, authController.getMe);
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/events', require('./src/routes/events'));
+app.use('/api/donations', require('./src/routes/donations'));
 app.use('/api/scans', require('./src/routes/scans'));
 app.use('/api/dashboard', require('./src/routes/dashboard'));
 app.use('/api/volunteers', require('./src/routes/volunteers'));
