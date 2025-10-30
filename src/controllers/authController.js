@@ -153,6 +153,14 @@ exports.registerV2 = async (req, res, next) => {
     });
     await user.save();
 
+    // If beneficiary, generate QR code and update user
+    let qrCodeUrl = null;
+    if (role === 'beneficiary') {
+      qrCodeUrl = await generateQrCode(did);
+      user.qrCodeUrl = qrCodeUrl;
+      await user.save();
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
@@ -160,20 +168,26 @@ exports.registerV2 = async (req, res, next) => {
       { expiresIn: '24h' }
     );
 
+    // Do not expose private key in API response
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      did: user.did,
+      didPublicKey: user.didPublicKey,
+      didHederaTx: user.didHederaTx,
+      hederaAccountId: user.hederaAccountId,
+      hederaPublicKey: user.hederaPublicKey
+    };
+    if (role === 'beneficiary') {
+      userResponse.qrCodeUrl = qrCodeUrl;
+    }
+
     res.status(201).json({
       message: 'User registered with Hedera account',
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        did: user.did,
-        didPublicKey: user.didPublicKey,
-        didHederaTx: user.didHederaTx,
-        hederaAccountId: user.hederaAccountId,
-        hederaPublicKey: user.hederaPublicKey
-      }
+      user: userResponse
     });
   } catch (err) {
     next(err);
