@@ -1,166 +1,155 @@
-# Haid – Humanitarian Aid with Hedera
+# 🌍 **Haid – Humanitarian Aid with Hedera**
 
-**Haid** is a decentralized, transparent, and inclusive humanitarian aid distribution platform built on **Hedera Guardian**. It is designed to ensure **accountable, efficient, and verifiable aid delivery** to vulnerable populations.
-
----
-
-## Features
-
-* **QR/NFC Wristbands:** Each aid recipient gets a wristband linked to a unique **DID (Decentralized Identifier)**.
-* **Aid Distribution Events:** NGOs can create and manage distributions (Morning, Afternoon, Evening).
-* **Scan & Verify:** Volunteers scan wristbands; all scans are logged on **Hedera Guardian**.
-* **Real-time Dashboards:** NGOs, donors, and auditors can view charts, geo-heatmaps, and KPIs in real time.
-* **Multi-language Support:** English, French, Swahili, Hausa, Arabic.
-* **Accessibility:** Voice guidance, high contrast mode, large text for ease of use.
-* **Exportable Reports:** Generate CSV/PDF reports for audits or donors.
+**Deployed App:** [https://haid.vercel.app](https://haid.vercel.app)
+**Track:** *DLT for Operations*
+**Pitch deck:** [https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link](https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link)
+**Certificates:** [https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link](https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link)
 
 ---
 
-## Users & Roles
+## 🧩 **Overview**
 
-* **Aid Recipients:** Scan wristbands to receive aid, access multi-language instructions.
-* **NGOs / Aid Organizations:** Create events, monitor distributions, generate reports.
-* **Donors / Governments:** View live dashboards and impact metrics.
-* **Volunteers / Field Staff:** Scan wristbands, verify aid delivery.
-* **Auditors / Watchdogs:** Access tamper-proof logs for accountability.
+**Haid** is a **Hedera-powered humanitarian aid distribution system** that ensures transparency, dignity, and efficiency in how food, medical supplies, and essentials reach displaced people and refugees.
+
+It connects **NGOs, volunteers, donors, and recipients** through a unified ecosystem — leveraging **Hedera Guardian**, **DIDs**, and **immutable event logging** for verifiable trust.
 
 ---
 
-## Tech Stack
+## 💡 **Problem Statement**
 
-* **Frontend:** React / Next.js, charts with Recharts/D3.js, geo-maps.
-* **Backend:** Node.js / NestJS, REST APIs, role-based access control.
-* **Blockchain:** Hedera Guardian for logging distributions and issuing DIDs.
-* **Database:** PostgreSQL for off-chain storage, Guardian Indexer for visualization.
-* **Hardware:** NFC/QR wristbands integrated with mobile devices.
+Millions of displaced individuals struggle to access aid due to **identity barriers**, **fraudulent claims**, and **inefficient manual systems**.
+NGOs and donors lack visibility into how aid is distributed — leading to waste, double-claiming, and broken trust.
 
----
-
-## Hackathon MVP
-
-* Functional QR/NFC wristband scans
-* Guardian integration for verifiable logs
-* Multi-language, accessible dashboards
-* Real-time charts and geo-heatmaps
-* CSV/PDF export for audits and donors
+**Haid** fixes this by bringing **identity, distribution, and accountability** together — on Hedera.
 
 ---
 
-## Goal
+## 🔗 **Solution**
 
-Haid demonstrates **transparent, inclusive, and scalable humanitarian aid delivery**, providing NGOs, donors, and governments with a trusted system for distributing resources efficiently and fairly.
+Each **refugee receives a waterproof NFC wristband** (represented by QR code during the hackathon for demo purposes) that holds a **unique Decentralized Identifier (DID)** on **Hedera Guardian**.
 
+* Volunteers scan the band to verify identity and record aid distribution.
+* NGOs create and manage aid events (food, health, shelter, etc.).
+* Donors see immutable, real-time dashboards showing exactly where their contributions go.
 
+All transactions are **logged on Hedera**, ensuring transparency and zero tampering.
 
-# Haid Backend API
+---
 
-A Node.js backend server with Express and Hedera blockchain integration.
+## 🧠 **Why Hedera Guardian**
 
-## Features
+Haid is built using **Hedera Guardian**, an open-source, verifiable platform for sustainability and social impact solutions.
 
-- ✅ Express.js RESTful API server
-- ✅ Health check endpoint (`/health`)
-- ✅ Aid collection endpoint with double-claim prevention (`/api/v1/collections`)
-- ✅ Hedera Guardian logging for successful collections
-- ✅ Hedera testnet integration ready
-- ✅ Environment configuration with dotenv
-- ✅ Security middleware (Helmet, CORS)
-- ✅ Request logging with Morgan
-- ✅ Structured folder organization
+We leverage:
 
-## Quick Start
+* **Hedera Consensus Service (HCS)** for immutable, timestamped aid logs.
+* **Hedera DID** for anonymous yet verifiable identity management.
+* **Guardian Indexer** for structured event visualization and transparency dashboards.
 
-### Prerequisites
+This guarantees **auditable, cost-effective, and scalable** humanitarian operations.
 
-- Node.js (v14 or higher)
-- npm or yarn
+---
 
-### Installation
+## 👥 **User Roles & Flow**
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 🧍 Refugees (Aid Recipients)
 
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   
-4. Edit `.env` file with your Hedera testnet credentials:
-   ```
-   HEDERA_OPERATOR_ID=0.0.your_account_id
-   HEDERA_OPERATOR_KEY=your_private_key
-   HEDERA_GUARDIAN_TOPIC_ID=0.0.your_topic_id
-   ```
+* Receive NFC wristbands (QR demo for MVP).
+* Simply tap/scan to collect aid — no paperwork, no stress.
+* System ensures fairness — no double-claiming.
 
-### Running the Server
+### 🤝 NGO Staff
 
-Development mode (with auto-restart):
-```bash
-npm run dev
-```
+* Create aid events (e.g., “Food Distribution – Ajegunle Camp, Oct 2025”).
+* Assign and manage volunteers.
+* Track real-time collection and generate Hedera-anchored reports.
 
-Production mode:
-```bash
-npm start
-```
+### 💚 Volunteers
 
-The server will start on `http://localhost:3000`
+* Use scanning devices to log aid distribution.
+* Each scan is instantly recorded on Hedera.
+* See instant feedback (“Aid successfully logged”).
 
-## API Endpoints
+### 💸 Donors
 
-### Health Check
-- **GET** `/health` - Returns server status and system information
+* Have wallets auto-created upon registration.
+* Send donations directly to verified NGOs.
+* View transparent dashboards of every tℏ transaction and impact metrics.
 
-### API Root
-- **GET** `/api/v1` - API information and version
+### 🔍 Auditors
 
-### Events Analytics
-- **GET** `/api/v1/events/:id/logs` - Returns all collection records for a specific event
-- **GET** `/api/v1/events/:id/analytics` - Returns analytics summary with totalServed and duplicatesPrevented counts
-### Aid Collections
-- **POST** `/api/v1/collections` - Process aid collection request
-  - Body: `{ "refugeeDid": "string", "eventId": "string" }`
-  - Returns: Success with Guardian transaction details or error for duplicates
-- **GET** `/api/v1/collections/status?refugeeDid=...&eventId=...` - Check collection status
+* Independently verify all aid logs.
+* Use Guardian-based explorer to confirm immutable entries and ensure compliance.
 
-## Project Structure
+---
 
-```
-src/
-├── controllers/     # Route controllers
-├── routes/         # Express route definitions
-├── services/       # Business logic services
-├── middleware/     # Custom middleware
-└── config/         # Configuration files
-```
+## 💰 **Revenue & Sustainability Model**
 
-## Environment Variables
+1. **Platform-as-a-Service (PaaS):** NGOs and organizations pay subscription or usage fees for verifiable distribution tracking.
+2. **Transaction Fees:** Minimal processing fees on donor-to-NGO transfers via Hedera tokens.
+3. **Partnership Grants:** With UNHCR, UNICEF, and local governments adopting Haid as a traceability and compliance layer.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | 3000 |
-| `NODE_ENV` | Environment | development |
-| `HEDERA_OPERATOR_ID` | Hedera account ID | - |
-| `HEDERA_OPERATOR_KEY` | Hedera private key | - |
-| `HEDERA_GUARDIAN_TOPIC_ID` | Guardian topic ID for logging | - |
-| `API_PREFIX` | API route prefix | /api/v1 |
+---
 
-## Dependencies
+## 🗺️ **Roadmap**
 
-- **express** - Web framework
-- **@hashgraph/sdk** - Hedera SDK for blockchain integration
-- **dotenv** - Environment variable management
-- **cors** - Cross-origin resource sharing
-- **helmet** - Security middleware
-- **morgan** - HTTP request logger
+### ✅ **Hackathon MVP (Now)**
 
-## Development
+* QR-code based simulation of NFC band.
+* NGO, Volunteer, Donor, and Refugee dashboards live.
+* Guardian-linked immutable logging on Hedera Testnet.
+* Real-time dashboards + wallet integration.
 
-The project uses nodemon for development with auto-restart on file changes.
+### 🚀 **Post-Hackathon**
 
-```bash
-npm run dev
-```
+* Manufacture waterproof NFC Haid Bands.
+* Deploy Hedera wallets on Mainnet.
+* Pilot with NGO partners in West Africa refugee camps.
+* Integrate AI for predictive logistics and aid optimization.
+
+---
+
+## 🧭 **Architecture Overview**
+
+Frontend (Javascript + Chakra UI):
+
+* Accessible, multilingual dashboards (English, French, Swahili, Hausa, Arabic).
+* Voice guidance and high-contrast mode for accessibility.
+
+Backend (Node.js):
+
+* Event creation, user management, aid logging.
+* Off-chain caching synced with Hedera Guardian.
+
+Hedera Guardian (Blockchain Layer):
+
+* Immutable event storage via Hedera Consensus Service (HCS).
+* DIDs for each stakeholder.
+* Guardian Indexer visualizations for transparency.
+
+---
+
+## 🎯 **Impact**
+
+* 100% tamper-proof distribution logs.
+* 10× faster registration & distribution cycles.
+* 1 dashboard to unify all stakeholders.
+* Refugees receive aid fairly and transparently — with dignity.
+
+---
+
+## 🏆 **Why Haid Wins**
+
+* Empathy-driven design meets real-world scalability.
+* End-to-end DLT for operations — not a concept, a working system.
+* Built with Hedera Guardian, the global standard for sustainability and digital public goods.
+
+---
+
+## 👩‍💻 **Team Haid**
+
+* **Lydia** – Product Lead & PM
+* **Timothy** – Frontend Engineer
+* **Tobiloba** – Product Designer
+* **Olumuyiwa** – Hedera Developer
+* **Chinomso** – Backend Engineer
