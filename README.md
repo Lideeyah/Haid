@@ -122,121 +122,6 @@ MONGO_URI=your_mongodb_atlas_uri
 NODE_ENV=development
 HEDERA_NET=testnet
 OPERATOR_ID=0.0.xxxxxxx
-OPERATOR_KEY=302e... (never commit real keys)
-HEDERA_TOPIC_ID=0.0.xxxxxxx
-```
-
----
-
-## 🧑‍⚖️ Judge Credentials
-
-Test account ID and Private Key are provided in the DoraHacks submission text field for verification. **Do not commit any real credentials to the repo.**
-
----
-
-## 🧑‍💻 Author
-
-**Nduoma Chinomso Christian**  
-_AKA Buzz brain_
-
----
-
-## 📚 Table of Contents
-| Section | Description |
-|---|---|
-| [Live Hosted API](#live-hosted-api) | Hosted backend URLs |
-| [Features](#features) | Key backend features |
-| [Tech Stack](#tech-stack) | Technologies used |
-| [Architecture](#architecture-diagram) | Project structure |
-| [Quick Demo](#deployment--setup-instructions) | Fast local setup |
-| [Environment Variables](#example-configuration) | Key .env settings |
-| [Health Check](#health-check) | Backend status page |
-| [User Roles](#user-roles) | Supported roles |
-| [API Endpoints](#api-endpoints) | Endpoint details |
-| [Sample Test Flow](#sample-test-flow) | Logical API journey |
-| [Authentication](#authentication) | Auth logic |
-| [Event & Aid Logic](#event--aid-logic) | Event/aid flow |
-| [Dashboards](#dashboards) | Dashboard endpoints |
-| [Error Handling](#error-handling) | Error responses |
-| [Blockchain Roadmap](#blockchain-roadmap) | Future plans |
-| [Setup & Usage](#deployment--setup-instructions) | Getting started |
-| [Contributing](#contributing) | How to contribute |
-| [License](#license) | License info |
-
----
-
-## ✨ Features
-* Multi-role authentication: Beneficiary, Donor, Volunteer, NGO, Auditor
-* Event creation, volunteer assignment, and aid distribution tracking
-* QR code generation for beneficiaries (**anchored DID, blockchain-backed**)
-* **All key actions (registration, event, scan, audit) are anchored on Hedera Consensus Service for tamperproof records**
-* Real-time scan logging, duplicate prevention, and audit trails
-* Donor, NGO, and auditor dashboards with KPIs, impact, and **blockchain verification**
-* Robust validation and error handling (including blockchain anchoring errors)
-* Secure JWT authentication (HttpOnly cookies)
-* Fully documented Swagger API (**all blockchain fields included**)
-
----
-
-## 🛠️ Tech Stack
-- **Node.js** & **Express.js**: RESTful API
-- **MongoDB Atlas**: Cloud database
-- **JWT**: Authentication
-- **bcrypt**: Password hashing
-- **Swagger**: API documentation
-- **express-validator**: Request validation
-- **helmet, morgan, winston**: Security & logging
-- **@hashgraph/sdk**: Hedera integration
-- **Axios**: Hedera Mirror Node API requests
-
----
-
-## 👥 User Roles
-
-| Role         | Description                                      | Key Endpoints                |
-|--------------|--------------------------------------------------|------------------------------|
-| Beneficiary  | Receives aid, has a QR code (**anchored DID, blockchain-backed**) | Registration                 |
-| Donor        | Views impact dashboard, makes HBAR donations     | `/api/donor/dashboard`, `/api/donations` |
-| Volunteer    | Assigned to events, scans beneficiaries          | `/api/scans`                 |
-| NGO          | Creates events, manages volunteers                | `/api/events`, `/api/volunteers` |
-| Auditor      | Verifies distribution, views audit dashboard     | `/api/auditor/dashboard`     |
-
----
-
-## 🚦 API Endpoints
-
-See [`PAYMENT_API_DOC.md`](./PAYMENT_API_DOC.md) for full API documentation, including request/response examples, error handling, and payment logic. All endpoints, including:
-  - Beneficiary QR code access at all times (in registration, login, /me, and dedicated endpoint)
-  - Beneficiary dashboard and aid history stats: total aid received, duplicate attempts, success rate, upcoming distributions
-  - All new and updated response schemas
-## 🆕 Key API Improvements (2025)
-
-- **Beneficiary QR Code:** Now available at all times via registration, login, /me, and `/api/beneficiaries/:id/qr`.
-- **Beneficiary Aid History:**
-  - Returns stats: total aid received, duplicate attempts, success rate
-  - Includes upcoming distributions in the same response
-  - Full aid distribution history list
-- **Dashboard Stats:**
-  - Donor and beneficiary dashboards now include all relevant KPIs and blockchain-anchored metrics
-- **See [`PAYMENT_API_DOC.md`](./PAYMENT_API_DOC.md) for all details and examples.**
-
----
-
-## 🏁 Code Quality & Auditability
-- Clear, descriptive function names and consistent code style
-- Inline comments for complex logic
-- Linting with ESLint and Prettier (recommended)
-- All core logic files are clean and auditable
-- Standardized commit history
-
----
-
-## 🤝 Contributing
-- Please open issues or pull requests for improvements
-- Blockchain integration is live—feedback welcome!
-
----
-
 ## 📄 License
 MIT
 
@@ -248,13 +133,6 @@ For any questions, reach out via GitHub Issues.
 
 ## Overview
 Haid is a secure, scalable backend for humanitarian aid distribution, built with Node.js, Express, and Prisma/PostgreSQL. **All key actions are anchored on the Hedera Consensus Service blockchain for tamperproof auditability.** The backend supports multiple user roles, robust event and scan tracking, and advanced dashboards for donors, NGOs, volunteers, and auditors. The API is fully documented with Swagger and designed for easy frontend integration. **All records (registration, events, scans, audits) are verifiable on-chain.**
-
----
-
-## 🧑‍💻 Author
-
-**Nduoma Chinomso Christian**  
-_AKA Buzz brain_
 
 ---
 
@@ -406,66 +284,8 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 }
 ```
 
-#### `GET /api/donor/dashboard`
-**Get donor dashboard KPIs and impact (donor only, blockchain-anchored)**
 
-**Success Response:**
-`200 OK`
-```json
-{
-  "recipientsServed": 120,
-  "distributionProgress": {
-    "totalEvents": 10,
-    "completedEvents": 7,
-    "percentCompleted": 70
-  },
-  "geographicImpact": [
-    { "location": "Lagos", "events": 5 },
-    { "location": "Abuja", "events": 2 }
-  ]
-}
-```
-
-#### `GET /api/auditor/dashboard`
-**Get auditor dashboard logs and verification (auditor only, blockchain-anchored)**
-
-**Query Params:**
-- `eventId` (optional): Filter logs by event ID
-- `date` (optional): Filter logs by date (YYYY-MM-DD)
-
-**Success Response:**
-`200 OK`
-```json
-{
-  "logs": [
-    {
-      "did": "did:haid:...", // Anchored DID
-      "hederaTx": {
-        "status": "SUCCESS",
-        "transactionId": "...",
-        "sequenceNumber": 101,
-        "runningHash": "..."
-      },
-      "status": "collected",
-      "timestamp": "2025-09-29T12:34:56Z"
-    }
-  ],
-  "guardianMatch": true
-}
-```
-**Error Responses:**
-`400 Bad Request`
-```json
-{
-  "errors": [ { "msg": "Invalid date format. Use YYYY-MM-DD.", "param": "date", "location": "query" } ]
-}
-```
-`404 Not Found`
-```json
-{
-  "message": "Event not found."
-}
-```
+<!-- For all sample requests and responses, see [API_DOC.md](./API_DOC.md) for full details and up-to-date schemas. -->
 
 ---
 
@@ -486,59 +306,8 @@ Displays a beautiful, professional HTML status page showing that the backend is 
 ---
 
 ## 📊 Dashboards
-### Donor Dashboard
-- KPIs: Total recipients served, distribution progress, geographic impact
-- Endpoint: `GET /api/donor/dashboard`
-- Example response:
-```json
-{
-  "recipientsServed": 120,
-  "distributionProgress": {
-    "totalEvents": 10,
-    "completedEvents": 7,
-    "percentCompleted": 70
-  },
-  "geographicImpact": [
-    { "location": "Lagos", "events": 5 },
-    { "location": "Abuja", "events": 2 }
-  ]
-}
-```
 
-### Auditor Dashboard
-- View all aid logs, filter by event/date
-- Compare logs with Hedera Guardian (future blockchain integration)
-- Endpoint: `GET /api/auditor/dashboard?eventId=...&date=YYYY-MM-DD`
-- Example response:
-```json
-{
-  "logs": [
-    {
-      "eventId": "...",
-      "beneficiaryId": "...",
-      "volunteerId": "...",
-      "timestamp": "2025-09-29T12:34:56Z",
-      "status": "collected",
-      "transactionId": "..."
-    }
-  ],
-  "hederaMatch": true
-}
-```
-
-### NGO/Admin Dashboard
-- General stats: events, volunteers, beneficiaries, aid distributed, aid types
-- Endpoint: `GET /api/dashboard/general-stats`
-- Example response:
-```json
-{
-  "eventsCount": 10,
-  "volunteersCount": 25,
-  "beneficiariesCount": 120,
-  "aidDistributed": 110,
-  "aidTypes": ["food", "medicine"]
-}
-```
+<!-- For all dashboard and endpoint examples, see [API_DOC.md](./API_DOC.md) for the latest request/response samples. -->
 
 ---
 
