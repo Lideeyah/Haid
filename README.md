@@ -1,8 +1,11 @@
 # **Haid – Humanitarian Aid with Hedera**
 
 **Deployed App:** [https://haid.vercel.app](https://haid.vercel.app)
+
 **Track:** DLT for Operations
+
 **Pitch Deck:** [View Deck](https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link)
+
 **Certificates:** [View Folder](https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link)
 
 ---
