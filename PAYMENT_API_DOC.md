@@ -56,7 +56,8 @@
       "didPublicKey": "string",
       "didHederaTx": { ... },
       "hederaAccountId": "string",
-      "hederaPublicKey": "string"
+      "hederaPublicKey": "string",
+      "qrCodeUrl": "string (beneficiary only)"
     }
   }
   ```
@@ -116,6 +117,75 @@
       "qrCodeUrl": "string (beneficiary only)"
     }
   }
+  ```
+## 👤 Beneficiary Dashboard & Stats
+
+### Get Beneficiary Summary
+- **GET** `/api/beneficiaries/:id/summary`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "lastDistribution": {
+      "event": { "id": "string", "name": "string" },
+      "timestamp": "2025-10-30T12:00:00Z"
+    },
+    "upcomingEvents": [
+      { "id": "string", "name": "string", "startTime": "2025-11-01T09:00:00Z", "location": "Lagos" }
+    ],
+    "registrationStatus": true,
+    "upcomingSchedule": { "id": "string", "name": "string", "startTime": "2025-11-01T09:00:00Z" },
+    "totalAids": 12,
+    "aidThisMonth": 2
+  }
+  ```
+- **Notes:**
+  - `aidThisMonth`: Number of aid distributions received by the beneficiary in the current month.
+  - `totalAids`: All-time total aid distributions.
+  - `lastDistribution`: Most recent aid event and timestamp.
+  - `upcomingEvents`: List of upcoming scheduled distributions.
+  - `upcomingSchedule`: The next scheduled event.
+### Get Beneficiary Aid History
+- **GET** `/api/beneficiaries/:id/aid-history?month=YYYY-MM`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  [
+    {
+      "id": "string",
+      "event": { "id": "string", "name": "string", "location": "string" },
+      "status": "collected",
+      "timestamp": "2025-10-30T12:00:00Z",
+      "hederaTx": { ... }
+    }
+  ]
+  ```
+- **Notes:**
+  - Returns all aid logs for the beneficiary, optionally filtered by month.
+### Get Beneficiary QR Code
+- **GET** `/api/beneficiaries/:id/qr`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  {
+    "did": "did:haid:...",
+    "qrCodeUrl": "string"
+  }
+  ```
+### Get Upcoming Distributions
+- **GET** `/api/beneficiaries/:id/upcoming-distributions`
+- **Headers:** `Authorization: Bearer <JWT>`
+- **Response:**
+  ```json
+  [
+    {
+      "id": "string",
+      "name": "string",
+      "location": "string",
+      "startTime": "2025-11-01T09:00:00Z",
+      "endTime": "2025-11-01T17:00:00Z"
+    }
+  ]
   ```
 
 ---

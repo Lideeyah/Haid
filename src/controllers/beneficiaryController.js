@@ -16,14 +16,38 @@ exports.getAidHistory = async (req, res, next) => {
       const end = new Date(Number(year), Number(m), 1);
       filter.timestamp = { $gte: start, $lt: end };
     }
-    const logs = await AidLog.find(filter).populate('event');
-    res.json(logs.map(l => ({
-      id: l._id,
-      event: l.event ? { id: l.event._id, name: l.event.name, location: l.event.location } : null,
-      status: l.status,
-      timestamp: l.timestamp,
-      hederaTx: l.hederaTx || null
-    })));
+    const logs = await AidLog.find({ did: user.did }).populate('event');
+    // Stats
+    const totalAidReceived = logs.filter(l => l.status === 'collected').length;
+    const duplicateAttempts = logs.filter(l => l.status === 'duplicate-blocked').length;
+    const totalAttempts = logs.length;
+    const successRate = totalAttempts > 0 ? (totalAidReceived / totalAttempts) * 100 : 0;
+
+    // Upcoming distributions (events with startTime > now)
+    const now = new Date();
+    const upcomingEvents = await Event.find({ startTime: { $gt: now } }).sort({ startTime: 1 });
+
+    res.json({
+      stats: {
+        totalAidReceived,
+        duplicateAttempts,
+        successRate: Number(successRate.toFixed(2))
+      },
+      history: logs.map(l => ({
+        id: l._id,
+        event: l.event ? { id: l.event._id, name: l.event.name, location: l.event.location } : null,
+        status: l.status,
+        timestamp: l.timestamp,
+        hederaTx: l.hederaTx || null
+      })),
+      upcomingDistributions: upcomingEvents.map(e => ({
+        id: e._id,
+        name: e.name,
+        location: e.location,
+        startTime: e.startTime,
+        endTime: e.endTime
+      }))
+    });
   } catch (err) { next(err); }
 };
 
@@ -54,6 +78,16 @@ exports.getSummary = async (req, res, next) => {
     const nextEvent = upcomingEvents[0] || null;
     // Aid history stats
     const totalAids = await AidLog.countDocuments({ did: user.did, status: 'collected' });
+
+    // Aid this month
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const aidThisMonth = await AidLog.countDocuments({
+      did: user.did,
+      status: 'collected',
+      timestamp: { $gte: startOfMonth, $lt: endOfMonth }
+    });
+
     res.json({
       lastDistribution: lastLog ? {
         event: lastLog.event ? { id: lastLog.event._id, name: lastLog.event.name } : null,
@@ -62,7 +96,8 @@ exports.getSummary = async (req, res, next) => {
       upcomingEvents: upcomingEvents.map(e => ({ id: e._id, name: e.name, startTime: e.startTime, location: e.location })),
       registrationStatus,
       upcomingSchedule: nextEvent ? { id: nextEvent._id, name: nextEvent.name, startTime: nextEvent.startTime } : null,
-      totalAids
+      totalAids,
+      aidThisMonth
     });
   } catch (err) { next(err); }
 };

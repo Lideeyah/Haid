@@ -205,7 +205,20 @@ _AKA Buzz brain_
 
 ## 🚦 API Endpoints
 
-See [`API_DOC.md`](./API_DOC.md) for full API documentation, including request/response examples, error handling, and payment logic.
+See [`PAYMENT_API_DOC.md`](./PAYMENT_API_DOC.md) for full API documentation, including request/response examples, error handling, and payment logic. All endpoints, including:
+  - Beneficiary QR code access at all times (in registration, login, /me, and dedicated endpoint)
+  - Beneficiary dashboard and aid history stats: total aid received, duplicate attempts, success rate, upcoming distributions
+  - All new and updated response schemas
+## 🆕 Key API Improvements (2025)
+
+- **Beneficiary QR Code:** Now available at all times via registration, login, /me, and `/api/beneficiaries/:id/qr`.
+- **Beneficiary Aid History:**
+  - Returns stats: total aid received, duplicate attempts, success rate
+  - Includes upcoming distributions in the same response
+  - Full aid distribution history list
+- **Dashboard Stats:**
+  - Donor and beneficiary dashboards now include all relevant KPIs and blockchain-anchored metrics
+- **See [`PAYMENT_API_DOC.md`](./PAYMENT_API_DOC.md) for all details and examples.**
 
 ---
 
