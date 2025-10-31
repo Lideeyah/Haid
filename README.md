@@ -132,7 +132,7 @@ Hedera Guardian (Blockchain Layer):
 
 ---
 
-## 🎯 **Impact**
+## **Impact**
 
 * 100% tamper-proof distribution logs.
 * 10× faster registration & distribution cycles.
@@ -141,7 +141,7 @@ Hedera Guardian (Blockchain Layer):
 
 ---
 
-## 🏆 **Why Haid Wins**
+## **Why Haid Wins**
 
 * Empathy-driven design meets real-world scalability.
 * End-to-end DLT for operations — not a concept, a working system.
@@ -149,7 +149,7 @@ Hedera Guardian (Blockchain Layer):
 
 ---
 
-## 👩‍💻 **Team Haid**
+## **Team Haid**
 
 * **Lydia** – Product Lead & PM
 * **Timothy** – Frontend Engineer
