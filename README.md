@@ -1,13 +1,16 @@
-# 🌍 **Haid – Humanitarian Aid with Hedera**
+# **Haid – Humanitarian Aid with Hedera**
 
 **Deployed App:** [https://haid.vercel.app](https://haid.vercel.app)
+
 **Track:** *DLT for Operations*
+
 **Pitch deck:** [https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link](https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link)
+
 **Certificates:** [https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link](https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link)
 
 ---
 
-## 🧩 **Overview**
+##  **Overview**
 
 **Haid** is a **Hedera-powered humanitarian aid distribution system** that ensures transparency, dignity, and efficiency in how food, medical supplies, and essentials reach displaced people and refugees.
 
@@ -15,7 +18,7 @@ It connects **NGOs, volunteers, donors, and recipients** through a unified ecosy
 
 ---
 
-## 💡 **Problem Statement**
+## **Problem Statement**
 
 Millions of displaced individuals struggle to access aid due to **identity barriers**, **fraudulent claims**, and **inefficient manual systems**.
 NGOs and donors lack visibility into how aid is distributed — leading to waste, double-claiming, and broken trust.
@@ -24,7 +27,7 @@ NGOs and donors lack visibility into how aid is distributed — leading to waste
 
 ---
 
-## 🔗 **Solution**
+## **Solution**
 
 Each **refugee receives a waterproof NFC wristband** (represented by QR code during the hackathon for demo purposes) that holds a **unique Decentralized Identifier (DID)** on **Hedera Guardian**.
 
@@ -36,7 +39,7 @@ All transactions are **logged on Hedera**, ensuring transparency and zero tamper
 
 ---
 
-## 🧠 **Why Hedera Guardian**
+## **Why Hedera Guardian**
 
 Haid is built using **Hedera Guardian**, an open-source, verifiable platform for sustainability and social impact solutions.
 
@@ -50,40 +53,40 @@ This guarantees **auditable, cost-effective, and scalable** humanitarian operati
 
 ---
 
-## 👥 **User Roles & Flow**
+## **User Roles & Flow**
 
-### 🧍 Refugees (Aid Recipients)
+### Refugees (Aid Recipients)
 
 * Receive NFC wristbands (QR demo for MVP).
 * Simply tap/scan to collect aid — no paperwork, no stress.
 * System ensures fairness — no double-claiming.
 
-### 🤝 NGO Staff
+### NGO Staff
 
 * Create aid events (e.g., “Food Distribution – Ajegunle Camp, Oct 2025”).
 * Assign and manage volunteers.
 * Track real-time collection and generate Hedera-anchored reports.
 
-### 💚 Volunteers
+### Volunteers
 
 * Use scanning devices to log aid distribution.
 * Each scan is instantly recorded on Hedera.
 * See instant feedback (“Aid successfully logged”).
 
-### 💸 Donors
+### Donors
 
 * Have wallets auto-created upon registration.
 * Send donations directly to verified NGOs.
 * View transparent dashboards of every tℏ transaction and impact metrics.
 
-### 🔍 Auditors
+### Auditors
 
 * Independently verify all aid logs.
 * Use Guardian-based explorer to confirm immutable entries and ensure compliance.
 
 ---
 
-## 💰 **Revenue & Sustainability Model**
+## **Revenue & Sustainability Model**
 
 1. **Platform-as-a-Service (PaaS):** NGOs and organizations pay subscription or usage fees for verifiable distribution tracking.
 2. **Transaction Fees:** Minimal processing fees on donor-to-NGO transfers via Hedera tokens.
@@ -91,16 +94,16 @@ This guarantees **auditable, cost-effective, and scalable** humanitarian operati
 
 ---
 
-## 🗺️ **Roadmap**
+## **Roadmap**
 
-### ✅ **Hackathon MVP (Now)**
+### **Hackathon MVP (Now)**
 
 * QR-code based simulation of NFC band.
 * NGO, Volunteer, Donor, and Refugee dashboards live.
 * Guardian-linked immutable logging on Hedera Testnet.
 * Real-time dashboards + wallet integration.
 
-### 🚀 **Post-Hackathon**
+### **Post-Hackathon**
 
 * Manufacture waterproof NFC Haid Bands.
 * Deploy Hedera wallets on Mainnet.
