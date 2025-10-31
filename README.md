@@ -48,7 +48,7 @@ We leverage:
 * **Hedera Decentralized Identity (DID)** for privacy-preserving user identity.
 * **Guardian Indexer** for transparent data visualization and verification.
 
-Together, these components make Haid scalable, auditable, and affordable — ideal for high-impact humanitarian operations.
+Together, these components make Haid scalable, auditable, and affordable; ideal for high-impact humanitarian operations.
 
 ---
 
@@ -136,7 +136,7 @@ Ensure full compliance and integrity of all distributed aid.
 ## **Why Haid Wins**
 
 Because it’s built with empathy, not ego.
-Haid combines real-world practicality with verifiable technology — solving one of the hardest humanitarian challenges through simplicity and trust.
+Haid combines real-world practicality with verifiable technology - solving one of the hardest humanitarian challenges through simplicity and trust.
 
 It’s not just a concept. It’s a working end-to-end system built on Hedera Guardian, designed to scale across Africa and beyond.
 
