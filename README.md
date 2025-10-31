@@ -144,7 +144,11 @@ It’s not just a concept. It’s a working end-to-end system built on Hedera Gu
 ## **Team Haid**
 
 **Lydia Solomon** - Product Lead & PM
+
 **Timothy** - Frontend Engineer
+
 **Tobiloba** - Product Designer
+
 **Olumuyiwa** - Hedera Developer
+
 **Chinomso** - Backend Engineer
