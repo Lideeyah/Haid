@@ -120,7 +120,6 @@ Ensure full compliance and integrity of all distributed aid.
 | **Backend**          | Node.js                    | Event creation, user management, and real-time logging.                                                                 |
 | **Blockchain Layer** | Hedera Guardian (HCS, DID) | Immutable event storage, decentralized identity, and data transparency.                                                 |
 | **Database**         | MongoDB                    | Off-chain caching and queryable records synced with Hedera.                                                             |
-| **Visualization**    | Recharts + Leaflet.js      | Visual analytics and geographic mapping.                                                                                |
 
 ---
 
