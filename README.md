@@ -1,158 +1,148 @@
 # **Haid – Humanitarian Aid with Hedera**
 
 **Deployed App:** [https://haid.vercel.app](https://haid.vercel.app)
-
-**Track:** *DLT for Operations*
-
-**Pitch deck:** [https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link](https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link)
-
-**Certificates:** [https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link](https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link)
+**Track:** DLT for Operations
+**Pitch Deck:** [View Deck](https://drive.google.com/file/d/1KJg9ox0LCqmu2kFjR4ObKcr3o21oIwhQ/view?usp=drive_link)
+**Certificates:** [View Folder](https://drive.google.com/drive/folders/1eJqfsxgVWmBKuvDHocuY1ZKz837Q5HRR?usp=drive_link)
 
 ---
 
-##  **Overview**
+## **Overview**
 
-**Haid** is a **Hedera-powered humanitarian aid distribution system** that ensures transparency, dignity, and efficiency in how food, medical supplies, and essentials reach displaced people and refugees.
+Haid is a humanitarian aid distribution system powered by the Hedera Guardian network.
+It brings transparency, dignity, and efficiency to how food, medical supplies, and essentials reach displaced people and refugees.
 
-It connects **NGOs, volunteers, donors, and recipients** through a unified ecosystem — leveraging **Hedera Guardian**, **DIDs**, and **immutable event logging** for verifiable trust.
+The platform connects NGOs, volunteers, donors, and recipients in one trusted ecosystem, using Hedera’s DIDs and immutable event logs to guarantee fairness and accountability.
 
 ---
 
 ## **Problem Statement**
 
-Millions of displaced individuals struggle to access aid due to **identity barriers**, **fraudulent claims**, and **inefficient manual systems**.
-NGOs and donors lack visibility into how aid is distributed — leading to waste, double-claiming, and broken trust.
+Millions of displaced people struggle to access aid because of broken systems: no formal identity, fraudulent claims, and chaotic manual processes.
+For NGOs and donors, it’s almost impossible to see where aid actually goes or verify how it’s used.
 
-**Haid** fixes this by bringing **identity, distribution, and accountability** together — on Hedera.
+This lack of transparency creates waste, slows down distribution, and erodes trust. Haid fixes this by putting identity, distribution, and accountability all on Hedera’s distributed ledger.
 
 ---
 
 ## **Solution**
 
-Each **refugee receives a waterproof NFC wristband** (represented by QR code during the hackathon for demo purposes) that holds a **unique Decentralized Identifier (DID)** on **Hedera Guardian**.
+Each refugee receives a waterproof **Haid Band** embedded with an **NFC chip** that contains a unique **Decentralized Identifier (DID)** on Hedera Guardian.
+For the hackathon, this is represented by a **QR code**, used purely for demo purposes due to financial constraints.
 
-* Volunteers scan the band to verify identity and record aid distribution.
-* NGOs create and manage aid events (food, health, shelter, etc.).
-* Donors see immutable, real-time dashboards showing exactly where their contributions go.
-
-All transactions are **logged on Hedera**, ensuring transparency and zero tampering.
+When a volunteer scans a band, the system instantly verifies the recipient’s identity and logs the distribution on Hedera.
+NGOs can then track events in real time, while donors and auditors can see exactly how aid moves — all recorded immutably on-chain.
 
 ---
 
 ## **Why Hedera Guardian**
 
-Haid is built using **Hedera Guardian**, an open-source, verifiable platform for sustainability and social impact solutions.
+Haid uses **Hedera Guardian**, the open-source sustainability platform that enables verifiable, tamper-proof data management.
 
 We leverage:
 
-* **Hedera Consensus Service (HCS)** for immutable, timestamped aid logs.
-* **Hedera DID** for anonymous yet verifiable identity management.
-* **Guardian Indexer** for structured event visualization and transparency dashboards.
+* **Hedera Consensus Service (HCS)** for timestamped, immutable event records.
+* **Hedera Decentralized Identity (DID)** for privacy-preserving user identity.
+* **Guardian Indexer** for transparent data visualization and verification.
 
-This guarantees **auditable, cost-effective, and scalable** humanitarian operations.
+Together, these components make Haid scalable, auditable, and affordable — ideal for high-impact humanitarian operations.
 
 ---
 
-## **User Roles & Flow**
+## **User Roles and Flow**
 
-### Refugees (Aid Recipients)
+### Refugees
 
-* Receive NFC wristbands (QR demo for MVP).
-* Simply tap/scan to collect aid — no paperwork, no stress.
-* System ensures fairness — no double-claiming.
+Receive Haid Bands (or QR codes for the MVP).
+Simply tap or scan to collect aid.
+No paperwork, no waiting, no double-claiming.
 
-### NGO Staff
+### NGOs
 
-* Create aid events (e.g., “Food Distribution – Ajegunle Camp, Oct 2025”).
-* Assign and manage volunteers.
-* Track real-time collection and generate Hedera-anchored reports.
+Create and manage aid events such as food or shelter distributions.
+Assign volunteers and monitor real-time collection data.
+Export on-chain verified reports for donors and partners.
 
 ### Volunteers
 
-* Use scanning devices to log aid distribution.
-* Each scan is instantly recorded on Hedera.
-* See instant feedback (“Aid successfully logged”).
+Use mobile scanning devices to log each collection event.
+Every scan is instantly recorded on Hedera.
+Receive instant feedback when aid is successfully logged.
 
 ### Donors
 
-* Have wallets auto-created upon registration.
-* Send donations directly to verified NGOs.
-* View transparent dashboards of every tℏ transaction and impact metrics.
+Get an automatic Hedera wallet at registration.
+Send donations directly to verified NGOs.
+See live dashboards showing every transaction and its on-chain proof.
 
 ### Auditors
 
-* Independently verify all aid logs.
-* Use Guardian-based explorer to confirm immutable entries and ensure compliance.
+Verify all recorded events on the Hedera Guardian indexer.
+Ensure full compliance and integrity of all distributed aid.
 
 ---
 
-## **Revenue & Sustainability Model**
+## **Revenue and Sustainability**
 
-1. **Platform-as-a-Service (PaaS):** NGOs and organizations pay subscription or usage fees for verifiable distribution tracking.
-2. **Transaction Fees:** Minimal processing fees on donor-to-NGO transfers via Hedera tokens.
-3. **Partnership Grants:** With UNHCR, UNICEF, and local governments adopting Haid as a traceability and compliance layer.
+* **Platform-as-a-Service model:** NGOs and partner organizations subscribe to Haid for transparent, verifiable distribution tracking.
+* **Transaction fees:** Minimal service fees on donor-to-NGO transfers via Hedera tokens.
+* **Partnership and grants:** Collaborations with UNHCR, UNICEF, and government bodies to adopt Haid as a compliance and traceability layer for social programs.
 
 ---
 
 ## **Roadmap**
 
-### **Hackathon MVP (Now)**
+### Hackathon MVP (Now)
 
-* QR-code based simulation of NFC band.
-* NGO, Volunteer, Donor, and Refugee dashboards live.
-* Guardian-linked immutable logging on Hedera Testnet.
-* Real-time dashboards + wallet integration.
+* QR code simulation of the NFC band.
+* Full dashboards for NGOs, volunteers, donors, and refugees.
+* Immutable Hedera Guardian logging on Testnet.
+* Real-time analytics and automatic wallet creation.
 
-### **Post-Hackathon**
+### Post-Hackathon
 
 * Manufacture waterproof NFC Haid Bands.
-* Deploy Hedera wallets on Mainnet.
-* Pilot with NGO partners in West Africa refugee camps.
+* Move wallets and event logging to Hedera Mainnet.
+* Pilot with partner NGOs in West African refugee camps.
 * Integrate AI for predictive logistics and aid optimization.
+* Add trackable Haid Bands for location safety and migration support.
 
 ---
 
-## 🧭 **Architecture Overview**
+## **Architecture Overview**
 
-Frontend (Javascript + Chakra UI):
-
-* Accessible, multilingual dashboards (English, French, Swahili, Hausa, Arabic).
-* Voice guidance and high-contrast mode for accessibility.
-
-Backend (Node.js):
-
-* Event creation, user management, aid logging.
-* Off-chain caching synced with Hedera Guardian.
-
-Hedera Guardian (Blockchain Layer):
-
-* Immutable event storage via Hedera Consensus Service (HCS).
-* DIDs for each stakeholder.
-* Guardian Indexer visualizations for transparency.
+| Layer                | Tools                      | Purpose                                                                                                                 |
+| -------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**         | Javascript + Chakra UI     | Accessible, multilingual dashboards in English, French, Swahili, Hausa, and Arabic, with voice and high-contrast modes. |
+| **Backend**          | Node.js                    | Event creation, user management, and real-time logging.                                                                 |
+| **Blockchain Layer** | Hedera Guardian (HCS, DID) | Immutable event storage, decentralized identity, and data transparency.                                                 |
+| **Database**         | MongoDB                    | Off-chain caching and queryable records synced with Hedera.                                                             |
+| **Visualization**    | Recharts + Leaflet.js      | Visual analytics and geographic mapping.                                                                                |
 
 ---
 
 ## **Impact**
 
-* 100% tamper-proof distribution logs.
-* 10× faster registration & distribution cycles.
-* 1 dashboard to unify all stakeholders.
-* Refugees receive aid fairly and transparently — with dignity.
+* 100% tamper-proof logs for every aid event.
+* Up to 10× faster registration and distribution.
+* Unified dashboard for all stakeholders.
+* Refugees receive fair, transparent, and dignified aid.
 
 ---
 
 ## **Why Haid Wins**
 
-* Empathy-driven design meets real-world scalability.
-* End-to-end DLT for operations — not a concept, a working system.
-* Built with Hedera Guardian, the global standard for sustainability and digital public goods.
+Because it’s built with empathy, not ego.
+Haid combines real-world practicality with verifiable technology — solving one of the hardest humanitarian challenges through simplicity and trust.
+
+It’s not just a concept. It’s a working end-to-end system built on Hedera Guardian, designed to scale across Africa and beyond.
 
 ---
 
 ## **Team Haid**
 
-* **Lydia** – Product Lead & PM
-* **Timothy** – Frontend Engineer
-* **Tobiloba** – Product Designer
-* **Olumuyiwa** – Hedera Developer
-* **Chinomso** – Backend Engineer
+**Lydia Solomon** - Product Lead & PM
+**Timothy** - Frontend Engineer
+**Tobiloba** - Product Designer
+**Olumuyiwa** - Hedera Developer
+**Chinomso** - Backend Engineer
