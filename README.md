@@ -34,7 +34,7 @@ Each refugee receives a waterproof **Haid Band** embedded with an **NFC chip** t
 For the hackathon, this is represented by a **QR code**, used purely for demo purposes due to financial constraints.
 
 When a volunteer scans a band, the system instantly verifies the recipient’s identity and logs the distribution on Hedera.
-NGOs can then track events in real time, while donors and auditors can see exactly how aid moves — all recorded immutably on-chain.
+NGOs can then track events in real time, while donors and auditors can see exactly how aid moves; all recorded immutably on-chain.
 
 ---
 
@@ -114,7 +114,7 @@ Ensure full compliance and integrity of all distributed aid.
 
 ## **Architecture Overview**
 
-| Layer                | Tools                      | Purpose                                                                                                                 |
+|Layer                 |Tools                       |Purpose                                                                                                                  |
 | -------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **Frontend**         | Javascript + Chakra UI     | Accessible, multilingual dashboards in English, French, Swahili, Hausa, and Arabic, with voice and high-contrast modes. |
 | **Backend**          | Node.js                    | Event creation, user management, and real-time logging.                                                                 |
